@@ -1,0 +1,1725 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Hệ Thống Quản Lý & Tra Cứu Lịch Điểm Đến</title>
+  <!-- Tailwind CSS & SheetJS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; touch-action: pan-y; -webkit-tap-highlight-color: transparent; }
+    .hide-scrollbar::-webkit-scrollbar { display: none; }
+    .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  </style>
+</head>
+<body class="bg-slate-100 text-slate-800 h-screen w-screen overflow-hidden select-none flex flex-col justify-between">
+
+  <!-- ================= TOP 1/4 (22vh): HEADER & DROPDOWN ĐIỂM ĐẾN ================= -->
+  <header class="h-[22vh] flex-none bg-white border-b border-slate-200 px-3 py-2 flex flex-col justify-between shadow-sm z-10">
+    <!-- Hàng 1: Tiêu đề & Cụm nút: Thoát tài khoản - Danh sách lịch - Quản trị -->
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <div class="w-7 h-7 rounded-lg bg-blue-600 flex items-center justify-center text-white text-xs shadow-sm shadow-blue-200">
+          📅
+        </div>
+        <div>
+          <h1 class="text-xs font-extrabold text-slate-800 uppercase tracking-tight">TÌNH TRẠNG LỊCH ĐIỂM ĐẾN</h1>
+          <p id="user-display-tag" class="text-[9px] text-slate-400 font-medium leading-none">Hệ thống theo dõi & điều hành lịch tour</p>
+        </div>
+      </div>
+
+      <!-- Cụm nút công cụ -->
+      <div class="flex items-center gap-1.5">
+        <!-- Nút Thoát Tài Khoản -->
+        <button onclick="logoutAccount()" title="Đăng xuất tài khoản" class="w-7 h-7 rounded-lg bg-rose-50 hover:bg-rose-100 border border-rose-200 text-rose-600 flex items-center justify-center transition active:scale-95 shadow-xs">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+            <polyline points="16 17 21 12 16 7"></polyline>
+            <line x1="21" y1="12" x2="9" y2="12"></line>
+          </svg>
+        </button>
+
+        <!-- Nút Danh Sách Lịch Đã Chốt (Chỉ hiện trường công ty mình) -->
+        <button onclick="openBookingListModal()" title="Danh sách lịch công ty đã chốt" class="w-7 h-7 rounded-lg bg-blue-50 hover:bg-blue-100 border border-blue-200 text-blue-700 flex items-center justify-center transition active:scale-95 shadow-xs">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+            <line x1="16" y1="2" x2="16" y2="6"></line>
+            <line x1="8" y1="2" x2="8" y2="6"></line>
+            <line x1="3" y1="10" x2="21" y2="10"></line>
+            <path d="M8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01"></path>
+          </svg>
+        </button>
+
+        <!-- Thẻ Quản Trị -->
+        <button onclick="openAdminModal()" class="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-blue-600 text-white text-[11px] font-bold shadow-sm transition active:scale-95">
+          <span>⚙</span>
+          <span>Quản trị</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Hàng 2: DROPDOWN CHỌN ĐIỂM ĐẾN & SỨC CHỨA CÙNG MỘ HÀNG -->
+    <div class="flex items-center gap-2 my-auto">
+      <div class="flex-1">
+        <select id="dest-select" onchange="onSelectDestination(this.value)" class="w-full bg-blue-50 border border-blue-300 text-blue-900 text-xs font-bold rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-500 truncate cursor-pointer shadow-sm">
+          <!-- Render danh sách điểm đến -->
+        </select>
+      </div>
+      <span id="badge-capacity" class="flex-shrink-0 text-[11px] font-extrabold text-blue-700 bg-blue-100 border border-blue-200 px-2.5 py-1.5 rounded-lg shadow-sm whitespace-nowrap">
+        Tối đa: 0 hs
+      </span>
+    </div>
+
+    <!-- Hàng 3: CHÚ GIẢI MÀU CÓ THÊM THẺ "CTY MÌNH" (XANH DA TRỜI) -->
+    <div class="flex items-center justify-between text-[10px] font-bold border-t border-slate-100 pt-1 flex-wrap gap-1">
+      <div class="flex items-center gap-1">
+        <button onclick="openAvailableDestModal()" title="Tra cứu điểm còn trống theo ngày" class="flex items-center justify-center w-5 h-5 rounded-md bg-emerald-600 hover:bg-emerald-700 text-white shadow-xs transition active:scale-95 text-[10px]">
+          🔍
+        </button>
+        <div class="flex items-center gap-1 text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded-full border border-emerald-200">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Còn trống
+        </div>
+      </div>
+
+      <!-- Thẻ Công ty mình (Xanh da trời) -->
+      <div class="flex items-center gap-1 text-sky-800 bg-sky-50 px-1.5 py-0.5 rounded-full border border-sky-300 shadow-xs">
+        <span class="w-1.5 h-1.5 rounded-full bg-sky-500"></span> VAT
+      </div>
+
+      <div class="flex items-center gap-1 text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded-full border border-amber-200">
+        <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> Ít khách
+      </div>
+      <div class="flex items-center gap-1 text-rose-700 bg-rose-50 px-1.5 py-0.5 rounded-full border border-rose-200">
+        <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span> Đông khách
+      </div>
+    </div>
+  </header>
+
+  <!-- ================= MIDDLE 1/2 (54vh): MA TRẬN LỊCH 100% VỪA VẶN ================= -->
+  <main id="calendar-wrapper" class="h-[54vh] flex-1 flex flex-col justify-between px-2.5 py-1.5 bg-slate-50 overflow-hidden min-h-0">
+    <!-- Thanh điều hướng tháng -->
+    <div class="flex-none flex items-center justify-between bg-white px-2.5 py-1 rounded-lg border border-slate-200 shadow-sm mb-1">
+      <button id="btn-prev-month" onclick="prevMonth()" class="px-2.5 py-0.5 rounded-md text-[11px] font-bold text-slate-600 bg-slate-100 hover:bg-blue-50 hover:text-blue-600 disabled:opacity-30 disabled:cursor-not-allowed transition">
+        ◀ Tháng trước
+      </button>
+      
+      <div class="text-center">
+        <div id="txt-month-display" class="text-sm font-black text-blue-700 uppercase leading-none">THÁNG 11 / 2026</div>
+      </div>
+
+      <button id="btn-next-month" onclick="nextMonth()" class="px-2.5 py-0.5 rounded-md text-[11px] font-bold text-slate-600 bg-slate-100 hover:bg-blue-50 hover:text-blue-600 disabled:opacity-30 disabled:cursor-not-allowed transition">
+        Tháng sau ▶
+      </button>
+    </div>
+
+    <!-- Hàng tiêu đề thứ -->
+    <div class="flex-none grid grid-cols-7 gap-1 text-center text-[10px] font-black text-slate-400 uppercase tracking-wider mb-0.5">
+      <div>T2</div><div>T3</div><div>T4</div><div>T5</div><div>T6</div><div class="text-blue-600">T7</div><div class="text-rose-600">CN</div>
+    </div>
+
+    <!-- Lưới lịch 42 ô (6 hàng x 7 cột) -->
+    <div id="calendar-grid" class="flex-1 min-h-0 grid grid-cols-7 grid-rows-6 gap-1 h-full w-full">
+      <!-- Render ngày qua JS -->
+    </div>
+  </main>
+
+  <!-- ================= BOTTOM 1/4 (24vh): ẢNH FULL-WIDTH & ĐỊA CHỈ GÓC TRÁI ================= -->
+  <footer class="h-[24vh] flex-none w-full relative overflow-hidden bg-slate-900 border-t border-slate-300">
+    <img id="dest-image" src="" alt="Ảnh điểm đến" class="w-full h-full object-cover">
+    <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-transparent pointer-events-none"></div>
+
+    <div class="absolute bottom-2 left-3 right-3 z-10 flex flex-col justify-end text-white drop-shadow pointer-events-none">
+      <h2 id="dest-name" class="text-base font-extrabold tracking-tight truncate leading-tight drop-shadow-md">
+        Chưa chọn điểm đến
+      </h2>
+      <p class="text-xs text-slate-200 truncate flex items-center gap-1 font-medium mt-0.5 drop-shadow">
+        <span class="text-rose-400">📍</span>
+        <span id="txt-address">Đang tải địa chỉ...</span>
+      </p>
+    </div>
+  </footer>
+
+  <!-- ================= BANNER THÔNG BÁO NỔI (TOAST BANNER) ================= -->
+  <div id="toast-box" class="fixed top-3 left-1/2 -translate-x-1/2 z-[9999] pointer-events-none transition-all duration-300 transform -translate-y-12 opacity-0">
+    <div id="toast-content" class="flex items-center gap-2 px-4 py-2 rounded-full shadow-2xl text-xs font-bold border">
+      <span id="toast-icon" class="text-sm"></span>
+      <span id="toast-text"></span>
+    </div>
+  </div>
+
+  <!-- ================= MODAL: TRA CỨU ĐIỂM ĐẾN THEO 1 NGÀY CHỐT ================= -->
+  <div id="available-dest-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden z-50 flex items-center justify-center p-3">
+    <div class="bg-white border border-slate-200 rounded-2xl w-full max-w-md max-h-[85vh] flex flex-col shadow-2xl overflow-hidden">
+      <!-- Header -->
+      <div class="flex items-center justify-between px-4 py-3 border-b border-slate-100 bg-slate-50 flex-none">
+        <div class="flex items-center gap-2">
+          <div class="w-7 h-7 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center text-sm font-bold">
+            🔍
+          </div>
+          <div>
+            <h2 class="text-xs font-black text-slate-800 uppercase tracking-wide">Tra Cứu Điểm Đến Theo Ngày</h2>
+            <p class="text-[10px] text-slate-400">Xem các điểm còn trống hoặc ít khách (&lt;500 hs)</p>
+          </div>
+        </div>
+        <button onclick="closeAvailableDestModal()" class="w-7 h-7 rounded-full bg-slate-200 hover:bg-slate-300 text-slate-600 font-bold flex items-center justify-center text-xs">✕</button>
+      </div>
+
+      <!-- Ô nhập 1 ngày duy nhất -->
+      <div class="p-3 bg-white border-b border-slate-200 flex-none">
+        <label class="block text-[11px] font-bold text-slate-700 mb-1">Nhập ngày nhà trường muốn đi:</label>
+        <div class="relative flex items-center">
+          <input type="text" id="single-day-input" oninput="onSearchSingleDay()" placeholder="Gõ ngày (VD: 20 hoặc 20/11 hoặc 20/11/2026)..." class="w-full bg-blue-50/50 border-2 border-blue-400 rounded-xl pl-9 pr-8 py-2 text-xs text-blue-950 font-bold focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition">
+          <span class="absolute left-3 text-sm">📅</span>
+          <button onclick="clearSingleDayInput()" id="btn-clear-single-day" class="hidden absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 font-bold text-xs p-1">✕</button>
+        </div>
+        <div class="flex items-center justify-between text-[10px] text-slate-500 mt-1.5 px-0.5">
+          <span>Gõ <strong>20</strong> (tháng hiện tại) hoặc <strong>20/11</strong></span>
+          <span class="text-emerald-700 font-bold">● Trống / ● &lt;500 hs</span>
+        </div>
+      </div>
+
+      <!-- Khu vực hiển thị kết quả ngày đó -->
+      <div id="single-day-results" class="p-3 overflow-y-auto flex-1 space-y-2 bg-slate-50 min-h-[220px]">
+        <!-- Render kết quả qua JavaScript -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= MODAL: ĐĂNG NHẬP THÔNG TIN CÁ NHÂN LẦN ĐẦU ================= -->
+  <div id="account-modal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-md hidden z-[100] flex items-center justify-center p-4">
+    <div class="bg-white border border-slate-200 rounded-2xl w-full max-w-sm p-5 shadow-2xl space-y-4">
+      <div class="text-center space-y-1">
+        <div class="w-12 h-12 rounded-2xl bg-blue-100 text-blue-700 mx-auto flex items-center justify-center text-xl font-bold">
+          👤
+        </div>
+        <h2 class="text-base font-extrabold text-slate-800">Thông Tin Tài Khoản</h2>
+        <p class="text-xs text-slate-500">Vui lòng đăng ký họ tên & SĐT để thực hiện đặt và lưu lịch các trường</p>
+      </div>
+
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Họ và tên của bạn:</label>
+          <input type="text" id="acc-name-input" placeholder="VD: Lê Duy Khánh" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-800 font-semibold focus:ring-2 focus:ring-blue-500 outline-none">
+        </div>
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Số điện thoại liên hệ:</label>
+          <input type="tel" id="acc-phone-input" placeholder="VD: 0389975487" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-slate-800 font-semibold focus:ring-2 focus:ring-blue-500 outline-none">
+        </div>
+      </div>
+
+      <button onclick="saveUserProfile()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 rounded-xl text-xs shadow-md shadow-blue-200 transition active:scale-95">
+        Bắt Đầu Sử Dụng
+      </button>
+    </div>
+  </div>
+
+  <!-- ================= MODAL: CHI TIẾT NGÀY ĐƯỢC CHỌN (VIỀN XANH DA TRỜI NẾU CỦA CTY MÌNH) ================= -->
+  <div id="day-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
+    <div id="day-modal-card" class="bg-white border border-slate-200 rounded-2xl w-full max-w-sm p-4 shadow-2xl transition-all duration-200">
+      <div class="flex justify-between items-start border-b border-slate-100 pb-2.5">
+        <div>
+          <h3 id="modal-date-solar" class="text-base font-extrabold text-blue-700 leading-tight">Ngày Dương</h3>
+          <p id="modal-date-lunar" class="text-xs font-bold text-amber-600 mt-0.5">Âm lịch: </p>
+        </div>
+        <button onclick="closeDayModal()" class="w-7 h-7 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 font-bold flex items-center justify-center">✕</button>
+      </div>
+
+      <div class="my-3 space-y-2 text-xs">
+        <div class="flex justify-between"><span class="text-slate-500 font-medium">Điểm đến:</span> <span id="modal-dest-name" class="font-bold text-slate-800"></span></div>
+        <div class="flex justify-between items-center"><span class="text-slate-500 font-medium">Trạng thái:</span> <span id="modal-status-badge" class="font-bold px-2 py-0.5 rounded text-[11px]"></span></div>
+        
+        <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 mt-2 space-y-1.5">
+          <div class="flex justify-between items-start">
+            <span class="text-slate-500">Trường đăng ký:</span> 
+            <span id="modal-doan-name" class="font-bold text-slate-800 text-right">-</span>
+          </div>
+
+          <!-- Thông tin Đối tác Viện KH An Toàn (Hiện dưới tên trường nếu là công ty mình) -->
+          <div id="modal-partner-row" class="hidden flex justify-between items-center bg-sky-50 text-sky-800 px-2 py-1 rounded-lg border border-sky-200 font-bold">
+            <span>Đối tác:</span>
+            <span class="text-sky-900">Viện KH An Toàn</span>
+          </div>
+
+          <div class="flex justify-between"><span class="text-slate-500">Số lượng:</span> <span id="modal-doan-qty" class="font-black text-blue-600">-</span></div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-2 mt-4">
+        <button onclick="openBookingFormModal()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-2 rounded-xl flex items-center justify-center gap-1.5 transition shadow-sm active:scale-95">
+          <span>📝</span> <span>Đặt Lịch</span>
+        </button>
+        <button onclick="closeDayModal()" class="w-full bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-bold py-2 rounded-xl transition">
+          Đóng
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= MODAL: CỬA SỔ ĐIỀN THÔNG TIN ĐẶT LỊCH ================= -->
+  <div id="booking-form-modal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm hidden z-55 flex items-center justify-center p-3">
+    <div class="bg-white border border-slate-200 rounded-2xl w-full max-w-sm p-4 shadow-2xl space-y-3">
+      <div class="flex justify-between items-center border-b border-slate-100 pb-2">
+        <div>
+          <h3 class="text-sm font-extrabold text-slate-800">Đăng Ký Lịch Đoàn</h3>
+          <p id="book-target-time" class="text-[10px] text-blue-600 font-bold">Ngày --/--/----</p>
+        </div>
+        <button onclick="closeBookingFormModal()" class="w-6 h-6 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 font-bold flex items-center justify-center text-xs">✕</button>
+      </div>
+
+      <div class="space-y-2 text-xs">
+        <div>
+          <label class="block font-bold text-slate-600 mb-0.5 text-[10px]">Thông tin trường:</label>
+          <input type="text" id="book-school-name" placeholder="VD: THCS Giảng Võ" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-2.5 py-1.5 text-slate-800 font-semibold focus:ring-2 focus:ring-blue-500 outline-none">
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-600 mb-0.5 text-[10px]">Phân hiệu:</label>
+          <select id="book-branch-type" onchange="toggleBranchInput(this.value)" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-2.5 py-1.5 text-slate-800 font-semibold focus:ring-2 focus:ring-blue-500 outline-none cursor-pointer">
+            <option value="Toàn trường">Toàn trường</option>
+            <option value="Phân hiệu">Phân hiệu</option>
+          </select>
+        </div>
+
+        <div id="box-branch-name" class="hidden">
+          <label class="block font-bold text-slate-600 mb-0.5 text-[10px]">Tên phân hiệu:</label>
+          <input type="text" id="book-branch-name" placeholder="VD: Điểm trường B / Cơ sở 2" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-2.5 py-1.5 text-slate-800 font-semibold focus:ring-2 focus:ring-blue-500 outline-none">
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-600 mb-0.5 text-[10px]">Địa chỉ (Tên xã / phường):</label>
+          <input type="text" id="book-commune" placeholder="VD: Xã Cát Quế / Phường Cầu Giấy" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-2.5 py-1.5 text-slate-800 font-semibold focus:ring-2 focus:ring-blue-500 outline-none">
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-600 mb-0.5 text-[10px]">Số lượng học sinh dự kiến:</label>
+          <input type="number" id="book-student-qty" placeholder="VD: 650" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-2.5 py-1.5 text-slate-800 font-semibold focus:ring-2 focus:ring-blue-500 outline-none">
+        </div>
+      </div>
+
+      <div class="pt-1">
+        <button onclick="promptBookingConfirmation()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-extrabold py-2 rounded-xl text-xs shadow-md shadow-blue-200 transition active:scale-95">
+          Lưu Đăng Ký
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= MODAL: HỎI LẠI XÁC NHẬN ĐĂNG KÝ ================= -->
+  <div id="confirm-modal" class="fixed inset-0 bg-slate-900/75 backdrop-blur-sm hidden z-60 flex items-center justify-center p-4">
+    <div class="bg-white border border-slate-200 rounded-2xl w-full max-w-sm p-4 shadow-2xl space-y-3">
+      <div class="flex items-center gap-2 text-amber-500">
+        <span class="text-xl">⚠️</span>
+        <h3 class="text-sm font-extrabold text-slate-800">Xác Nhận Đăng Ký</h3>
+      </div>
+
+      <div id="confirm-prompt-text" class="text-xs text-slate-700 leading-relaxed font-medium bg-slate-50 p-3 rounded-xl border border-slate-200">
+        <!-- Render nội dung xác nhận -->
+      </div>
+
+      <div class="grid grid-cols-2 gap-2 pt-1">
+        <button onclick="closeConfirmModal()" class="w-full bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-2 rounded-xl text-xs transition">
+          Từ Chối
+        </button>
+        <button onclick="executeFinalBooking()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold py-2 rounded-xl text-xs shadow-sm transition active:scale-95">
+          Xác Nhận
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= MODAL: THÔNG BÁO ĐĂNG KÝ THÀNH CÔNG ================= -->
+  <div id="success-modal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm hidden z-65 flex items-center justify-center p-4">
+    <div class="bg-white border border-slate-200 rounded-2xl w-full max-w-xs p-5 shadow-2xl text-center space-y-3 animate-in zoom-in-95 duration-200">
+      <div class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto text-2xl font-black">
+        ✓
+      </div>
+      <h3 class="text-base font-extrabold text-slate-800">Đăng Ký Thành Công!</h3>
+      <p class="text-xs text-slate-500 leading-relaxed">
+        Lịch đã được ghi nhận vào hệ thống. Vui lòng liên hệ bộ phận dịch vụ để đảm bảo 100% chốt lịch.
+      </p>
+      <button onclick="closeSuccessModal()" class="w-full bg-slate-900 hover:bg-blue-600 text-white font-bold py-2 rounded-xl text-xs transition">
+        Hoàn Tất
+      </button>
+    </div>
+  </div>
+
+  <!-- ================= MODAL: DANH SÁCH LỊCH ĐÃ CHỐT (CHỈ HIỆN CỦA CTY MÌNH) ================= -->
+  <div id="booking-list-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden z-50 flex items-center justify-center p-3">
+    <div class="bg-white border border-slate-200 rounded-2xl w-full max-w-lg h-[88vh] flex flex-col shadow-2xl overflow-hidden">
+      <div class="flex items-center justify-between px-3 py-2.5 border-b border-slate-100 bg-slate-50 flex-none">
+        <div class="flex items-center gap-1.5">
+          <span class="text-base">📋</span>
+          <div>
+            <h2 class="text-xs font-black text-slate-800 uppercase tracking-wide">Danh Sách Lịch Công Ty Đã Chốt</h2>
+            <p class="text-[9px] text-slate-400">Chỉ hiển thị các trường do công ty mình đặt lịch</p>
+          </div>
+        </div>
+        <button onclick="closeBookingListModal()" class="w-7 h-7 rounded-full bg-slate-200 hover:bg-slate-300 text-slate-600 font-bold flex items-center justify-center text-xs">✕</button>
+      </div>
+
+      <div class="p-2.5 bg-white border-b border-slate-200 flex items-center gap-2 flex-none">
+        <div class="flex-1 relative">
+          <input type="text" id="list-search-input" oninput="renderBookingList()" placeholder="Tìm tên trường, điểm đến, người chốt..." class="w-full bg-slate-100 border border-slate-200 rounded-lg pl-7 pr-2 py-1.5 text-xs text-slate-800 font-medium focus:ring-1 focus:ring-blue-500 outline-none">
+          <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs">🔍</span>
+        </div>
+
+        <button id="btn-toggle-eye" onclick="toggleHidePastBookings()" title="Ẩn/Hiện các lịch trước ngày tra cứu" class="px-2.5 py-1.5 rounded-lg border text-xs font-bold flex items-center gap-1 bg-amber-50 border-amber-200 text-amber-700 hover:bg-amber-100 transition flex-shrink-0">
+          <span id="eye-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"></path>
+              <path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"></path>
+              <path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"></path>
+              <line x1="2" y1="2" x2="22" y2="22"></line>
+            </svg>
+          </span>
+          <span id="eye-text" class="text-[10px]">Đang ẩn ngày cũ</span>
+        </button>
+      </div>
+
+      <div id="booking-cards-container" class="p-2.5 overflow-y-auto flex-1 space-y-2 bg-slate-50"></div>
+    </div>
+  </div>
+
+  <!-- ================= MODAL: BẢNG QUẢN TRỊ (CÓ Ô TÌM KIẾM ĐIỂM ĐẾN) ================= -->
+  <div id="admin-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden z-50 flex items-center justify-center p-3">
+    <div class="bg-white border border-slate-200 rounded-2xl w-full max-w-xl max-h-[92vh] flex flex-col shadow-2xl overflow-hidden">
+      <div class="flex justify-between items-center px-4 py-3 border-b border-slate-100 bg-slate-50">
+        <div class="flex items-center gap-2">
+          <span class="text-base">⚙</span>
+          <h2 class="text-xs font-extrabold text-slate-800 uppercase tracking-wider">Quản Trị Hệ Thống</h2>
+        </div>
+        <button onclick="closeAdminModal()" class="w-7 h-7 rounded-full bg-slate-200 hover:bg-slate-300 text-slate-600 font-bold flex items-center justify-center">✕</button>
+      </div>
+
+      <div class="p-3.5 overflow-y-auto flex-1 space-y-3.5 text-xs">
+        <!-- Form Điểm đến -->
+        <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
+          <h3 class="font-extrabold text-blue-700 uppercase text-[11px] flex items-center gap-1">
+            <span>🏛</span> <span>Thông Tin Điểm Đến</span>
+          </h3>
+          <input type="hidden" id="form-dest-id">
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="block text-slate-500 font-medium mb-1 text-[10px]">Tên điểm đến:</label>
+              <input type="text" id="form-dest-name" placeholder="VD: Phù Đổng Green Park" class="w-full bg-white border border-slate-200 rounded-lg px-2 py-1 text-slate-800 font-medium focus:ring-1 focus:ring-blue-500 outline-none">
+            </div>
+            <div>
+              <label class="block text-slate-500 font-medium mb-1 text-[10px]">Sức chứa tối đa (hs):</label>
+              <input type="number" id="form-dest-capacity" placeholder="VD: 2000" class="w-full bg-white border border-slate-200 rounded-lg px-2 py-1 text-slate-800 font-medium focus:ring-1 focus:ring-blue-500 outline-none">
+            </div>
+          </div>
+          <div>
+            <label class="block text-slate-500 font-medium mb-1 text-[10px]">Địa chỉ:</label>
+            <input type="text" id="form-dest-address" placeholder="VD: Gia Lâm, Hà Nội" class="w-full bg-white border border-slate-200 rounded-lg px-2 py-1 text-slate-800 font-medium focus:ring-1 focus:ring-blue-500 outline-none">
+          </div>
+          <div>
+            <label class="block text-slate-500 font-medium mb-1 text-[10px]">Link ảnh minh họa (ImgBB, Google Drive, Direct URL):</label>
+            <input type="text" id="form-dest-img" placeholder="https://..." class="w-full bg-white border border-slate-200 rounded-lg px-2 py-1 text-slate-800 font-medium focus:ring-1 focus:ring-blue-500 outline-none">
+          </div>
+          <div class="flex gap-2 justify-end pt-1">
+            <button onclick="resetDestForm()" class="px-2.5 py-1 rounded-lg bg-slate-200 hover:bg-slate-300 font-bold text-slate-600 transition">Làm mới</button>
+            <button onclick="submitSaveDestination()" class="px-3 py-1 rounded-lg bg-blue-600 hover:bg-blue-700 font-bold text-white shadow-sm transition">Lưu Điểm Đến</button>
+          </div>
+        </div>
+
+        <!-- Nhập lịch qua Excel / AI -->
+        <div class="p-3 bg-blue-50/60 rounded-xl border border-blue-200 space-y-2">
+          <h3 class="font-extrabold text-blue-800 uppercase text-[11px] flex items-center gap-1">
+            <span>✨</span> <span>Google Gemini API: Cập Nhật Lịch Tự Động</span>
+          </h3>
+          <div>
+            <label class="block text-slate-600 font-medium mb-1 text-[10px]">Chọn điểm đến cần cập nhật:</label>
+            <select id="import-dest-select" class="w-full bg-white border border-slate-200 rounded-lg px-2 py-1 text-slate-800 font-semibold focus:ring-1 focus:ring-blue-500 outline-none"></select>
+          </div>
+          <div>
+            <label class="block text-slate-600 font-medium mb-1 text-[10px]">File Excel (.xlsx) danh sách đoàn (nếu có):</label>
+            <input type="file" id="excel-file-input" accept=".xlsx, .xls" class="block w-full text-[10px] text-slate-500 file:mr-2 file:py-0.5 file:px-2 file:rounded file:border-0 file:text-[10px] file:font-bold file:bg-blue-600 file:text-white hover:file:bg-blue-700">
+          </div>
+          <div>
+            <label class="block text-slate-600 font-medium mb-1 text-[10px]">Hoặc dán văn bản / tin nhắn thông báo chỗ từ đối tác:</label>
+            <textarea id="import-text-input" rows="2" placeholder="VD: Lịch bên em hiện tại vẫn còn trống các ngày trong tuần, ngoại trừ ngày 13/11, 20/11 và các ngày cuối tuần." class="w-full bg-white border border-slate-200 rounded-lg p-1.5 text-slate-800 font-medium focus:ring-1 focus:ring-blue-500 outline-none"></textarea>
+          </div>
+          <button id="btn-run-ai" onclick="submitAiImport()" class="w-full py-2 rounded-xl bg-blue-600 hover:bg-blue-700 font-bold text-white shadow-md shadow-blue-200 flex items-center justify-center gap-1.5 transition active:scale-95">
+            <span>✨ Phân Tích & Cập Nhật Lịch Khác Biệt</span>
+          </button>
+        </div>
+
+        <!-- DANH SÁCH ĐIỂM ĐẾN ĐANG QUẢN LÝ (CÓ THANH TÌM KIẾM MỚI BỔ SUNG) -->
+        <div class="space-y-1.5">
+          <div class="flex items-center justify-between">
+            <h3 class="font-extrabold text-slate-500 uppercase text-[11px]">Danh sách điểm đến đang quản lý</h3>
+            <span id="admin-dest-count" class="text-[10px] text-slate-400 font-bold"></span>
+          </div>
+          
+          <!-- Ô tìm kiếm điểm đến mới thêm -->
+          <div class="relative">
+            <input type="text" id="admin-dest-search" oninput="renderAdminDestList()" placeholder="Tìm tên điểm đến hoặc địa chỉ..." class="w-full bg-slate-50 border border-slate-300 rounded-lg pl-7 pr-2 py-1 text-xs text-slate-800 font-medium focus:ring-1 focus:ring-blue-500 outline-none">
+            <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs">🔍</span>
+          </div>
+
+          <div id="admin-dest-list" class="space-y-1.5 max-h-48 overflow-y-auto"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ================= 1. CẤU HÌNH LIÊN KẾT BACKEND =================
+    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwHzF5cCopy1EQH9UkAQcG3sfX_usbG3z9CxuFtspRwf_b1lHzGf_UbamE3suyqy0jT/exec";
+
+    const START_YEAR = 2026;
+    const START_MONTH = 11;
+    const MAX_MONTHS = 24;
+
+    let currentYear = START_YEAR;
+    let currentMonth = START_MONTH;
+    let destinations = [];
+    let bookings = [];
+    let selectedDestId = null;
+
+    let activeDayData = null;
+    let hidePastBookings = true;
+
+    let availYear = START_YEAR;
+    let availMonth = START_MONTH;
+
+    // HÀM KIỂM TRA ĐOÀN CÓ PHẢI CỦA CÔNG TY MÌNH (CHỐT QUA ĐẶT LỊCH) HAY CỦA CTY KHÁC
+    function isOurCompanyBooking(b) {
+      if (!b) return false;
+      return Boolean(
+        b.is_internal === true || 
+        b.doi_tac === 'Viện KH An Toàn' || 
+        (b.nguoi_dat && String(b.nguoi_dat).trim() !== '')
+      );
+    }
+
+    // ================= 2. QUẢN LÝ TÀI KHOẢN NGƯỜI DÙNG =================
+    function checkUserProfile() {
+      const stored = localStorage.getItem('app_user_profile');
+      if (!stored) {
+        document.getElementById('account-modal').classList.remove('hidden');
+      } else {
+        const u = JSON.parse(stored);
+        document.getElementById('user-display-tag').innerText = `👤 ${u.name} - ${u.phone}`;
+      }
+    }
+
+    function saveUserProfile() {
+      const name = document.getElementById('acc-name-input').value.trim();
+      const phone = document.getElementById('acc-phone-input').value.trim();
+
+      if (!name || !phone) {
+        thongBao("Vui lòng nhập đầy đủ Họ tên và Số điện thoại!", "warning");
+        return;
+      }
+      if (phone.length < 9) {
+        thongBao("Số điện thoại không hợp lệ!", "warning");
+        return;
+      }
+
+      const user = { name: name, phone: phone };
+      localStorage.setItem('app_user_profile', JSON.stringify(user));
+      document.getElementById('account-modal').classList.add('hidden');
+      document.getElementById('user-display-tag').innerText = `👤 ${user.name} - ${user.phone}`;
+      thongBao(`Chào mừng ${user.name}!`, "success");
+    }
+
+    function logoutAccount() {
+      const stored = localStorage.getItem('app_user_profile');
+      const u = stored ? JSON.parse(stored) : null;
+      const userName = u ? u.name : "bạn";
+
+      if (!confirm(`Bạn có chắc chắn muốn thoát tài khoản (${userName})?`)) return;
+
+      localStorage.removeItem('app_user_profile');
+      document.getElementById('acc-name-input').value = '';
+      document.getElementById('acc-phone-input').value = '';
+      document.getElementById('user-display-tag').innerText = "Hệ thống theo dõi & điều hành lịch tour";
+      document.getElementById('account-modal').classList.remove('hidden');
+      thongBao("Đã đăng xuất tài khoản!", "warning");
+    }
+
+    function getCurrentUser() {
+      const stored = localStorage.getItem('app_user_profile');
+      return stored ? JSON.parse(stored) : { name: "Chưa rõ", phone: "" };
+    }
+
+    // ================= 3. THUẬT TOÁN ÂM LỊCH VIỆT NAM (HỒ NGỌC ĐỨC) =================
+    function jdFromDate(d, m, y) {
+      const a = Math.floor((14 - m) / 12);
+      const y2 = y + 4800 - a;
+      const m2 = m + 12 * a - 3;
+      return d + Math.floor((153 * m2 + 2) / 5) + 365 * y2 + Math.floor(y2 / 4) - Math.floor(y2 / 100) + Math.floor(y2 / 400) - 32045;
+    }
+    function getNewMoonDay(k, timeZone) {
+      const T = k / 1236.85;
+      const T2 = T * T;
+      const T3 = T2 * T;
+      const dr = Math.PI / 180;
+      let Jd1 = 2415020.75933 + 29.53058868 * k + 0.0001178 * T2 - 0.000000155 * T3;
+      Jd1 += 0.00033 * Math.sin((166.56 + 132.87 * T - 0.009173 * T2) * dr);
+      let M = 359.2242 + 29.10535608 * k - 0.0000333 * T2 - 0.00000347 * T3;
+      let Mpr = 306.0253 + 385.81691806 * k + 0.0107306 * T2 + 0.00001236 * T3;
+      let F = 21.2964 + 390.67050646 * k - 0.0016528 * T2 - 0.00000239 * T3;
+      let C1 = (0.1734 - 0.000393 * T) * Math.sin(M * dr) + 0.0021 * Math.sin(2 * dr * M);
+      C1 -= 0.4068 * Math.sin(Mpr * dr) + 0.0161 * Math.sin(2 * dr * Mpr);
+      C1 -= 0.0004 * Math.sin(3 * dr * Mpr);
+      C1 += 0.0104 * Math.sin(2 * dr * F) - 0.0051 * Math.sin((M + Mpr) * dr);
+      C1 -= 0.0074 * Math.sin((M - Mpr) * dr) + 0.0004 * Math.sin((2 * F + M) * dr);
+      return Math.floor(Jd1 + C1 + 0.5 + timeZone / 24);
+    }
+    function getSunLongitude(jdn, timeZone) {
+      const T = (jdn - 2451545.5 - timeZone / 24) / 36525;
+      const dr = Math.PI / 180;
+      const L0 = 280.46646 + 36000.76983 * T + 0.0003032 * T * T;
+      const M = 357.52911 + 35999.05029 * T - 0.0001537 * T * T;
+      const C = (1.914602 - 0.004817 * T - 0.000014 * T * T) * Math.sin(M * dr) + (0.019993 - 0.000101 * T) * Math.sin(2 * M * dr);
+      let theta = L0 + C;
+      theta = theta - 360 * Math.floor(theta / 360);
+      return Math.floor(theta / 30);
+    }
+    function convertSolar2Lunar(dd, mm, yy) {
+      const timeZone = 7;
+      const dayNumber = jdFromDate(dd, mm, yy);
+      const k = Math.floor((dayNumber - 2415021.0769986) / 29.530588853);
+      let monthStart = getNewMoonDay(k + 1, timeZone);
+      if (monthStart > dayNumber) monthStart = getNewMoonDay(k, timeZone);
+      let a11 = getNewMoonDay(Math.floor((jdFromDate(31, 12, yy) - 2415021.0769986) / 29.530588853), timeZone);
+      if (getSunLongitude(a11, timeZone) >= 9) a11 = getNewMoonDay(Math.floor((jdFromDate(31, 12, yy) - 2415021.0769986) / 29.530588853) - 1, timeZone);
+      const lunarDay = dayNumber - monthStart + 1;
+      const diff = Math.floor((monthStart - a11) / 29);
+      let lunarMonth = diff >= 0 ? diff + 11 : diff + 23;
+      if (lunarMonth > 12) lunarMonth -= 12;
+      return { day: lunarDay, month: lunarMonth };
+    }
+
+    // ================= 4. THÔNG BÁO TOAST =================
+    let toastTimer = null;
+    function thongBao(message, type = 'success') {
+      const box = document.getElementById('toast-box');
+      const content = document.getElementById('toast-content');
+      const icon = document.getElementById('toast-icon');
+      const text = document.getElementById('toast-text');
+
+      if (toastTimer) clearTimeout(toastTimer);
+
+      if (type === 'success') {
+        content.className = "flex items-center gap-2 px-4 py-2 rounded-full shadow-2xl text-xs font-bold bg-emerald-600 text-white border border-emerald-400";
+        icon.innerText = "✔";
+      } else if (type === 'warning') {
+        content.className = "flex items-center gap-2 px-4 py-2 rounded-full shadow-2xl text-xs font-bold bg-amber-500 text-white border border-amber-300";
+        icon.innerText = "⚠️";
+      } else {
+        content.className = "flex items-center gap-2 px-4 py-2 rounded-full shadow-2xl text-xs font-bold bg-rose-600 text-white border border-rose-400";
+        icon.innerText = "✖";
+      }
+
+      text.innerText = message;
+      box.classList.remove('-translate-y-12', 'opacity-0');
+      box.classList.add('translate-y-0', 'opacity-100');
+
+      toastTimer = setTimeout(() => {
+        box.classList.remove('translate-y-0', 'opacity-100');
+        box.classList.add('-translate-y-12', 'opacity-0');
+      }, 2600);
+    }
+
+    // ================= 5. TẢI DỮ LIỆU & RENDER =================
+    async function fetchData() {
+      const localSaved = localStorage.getItem('app_saved_bookings');
+      let localBookings = localSaved ? JSON.parse(localSaved) : [];
+
+      if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL.includes("AKfycbx...")) {
+        destinations = [
+          { id: "DD01", ten: "Phù Đổng Green Park", dia_chi: "Gia Lâm, Hà Nội", anh_url: "https://images.unsplash.com/photo-1511527661048-7fe73d85e9a4?w=1000", suc_chua: 2000 },
+          { id: "DD02", ten: "Terasol Farm Life", dia_chi: "Sóc Sơn, Hà Nội", anh_url: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=1000", suc_chua: 700 }
+        ];
+        bookings = [];
+      } else {
+        try {
+          const res = await fetch(APPS_SCRIPT_URL);
+          const data = await res.json();
+          destinations = data.destinations || [];
+          bookings = data.bookings || [];
+        } catch (e) {
+          console.error("Lỗi tải dữ liệu:", e);
+        }
+      }
+
+      localBookings.forEach(lb => {
+        const idx = bookings.findIndex(b => b.destination_id === lb.destination_id && b.date === lb.date);
+        if (idx >= 0) {
+          bookings[idx] = Object.assign(bookings[idx], lb);
+        } else {
+          bookings.push(lb);
+        }
+      });
+
+      if (destinations.length > 0 && !selectedDestId) {
+        selectedDestId = destinations[0].id;
+      }
+      renderDestSelect();
+      renderCalendar();
+      updateDestPreview();
+    }
+
+    function renderDestSelect() {
+      const select = document.getElementById('dest-select');
+      select.innerHTML = '';
+      destinations.forEach(d => {
+        const opt = document.createElement('option');
+        opt.value = d.id;
+        opt.innerText = d.ten;
+        if (d.id === selectedDestId) opt.selected = true;
+        select.appendChild(opt);
+      });
+      updateDestPreview();
+    }
+
+    function onSelectDestination(id) {
+      selectedDestId = id;
+      updateDestPreview();
+      renderCalendar();
+    }
+
+    function updateDestPreview() {
+      const dest = destinations.find(d => d.id === selectedDestId);
+      if (!dest) return;
+      document.getElementById('dest-name').innerText = dest.ten;
+      document.getElementById('txt-address').innerText = dest.dia_chi;
+      document.getElementById('dest-image').src = dest.anh_url || "https://images.unsplash.com/photo-1511527661048-7fe73d85e9a4?w=1000";
+      document.getElementById('badge-capacity').innerText = `Tối đa: ${dest.suc_chua.toLocaleString()} hs`;
+    }
+
+    // Render lưới lịch tháng (Màu xanh da trời đậm nếu là công ty mình chốt)
+    function renderCalendar() {
+      document.getElementById('txt-month-display').innerText = `THÁNG ${currentMonth} / ${currentYear}`;
+      const grid = document.getElementById('calendar-grid');
+      grid.innerHTML = '';
+
+      const monthsFromStart = (currentYear - START_YEAR) * 12 + (currentMonth - START_MONTH);
+      document.getElementById('btn-prev-month').disabled = (monthsFromStart <= 0);
+      document.getElementById('btn-next-month').disabled = (monthsFromStart >= MAX_MONTHS - 1);
+
+      const firstDay = new Date(currentYear, currentMonth - 1, 1).getDay();
+      const startCol = (firstDay === 0) ? 6 : firstDay - 1;
+      const daysInMonth = new Date(currentYear, currentMonth, 0).getDate();
+
+      for (let i = 0; i < startCol; i++) {
+        const blank = document.createElement('div');
+        blank.className = 'rounded-md bg-slate-200/40 border border-transparent';
+        grid.appendChild(blank);
+      }
+
+      for (let day = 1; day <= daysInMonth; day++) {
+        const dStr = `${currentYear}-${String(currentMonth).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        const lunar = convertSolar2Lunar(day, currentMonth, currentYear);
+
+        const b = bookings.find(item => item.destination_id === selectedDestId && item.date === dStr);
+        let status = 'TRONG';
+        let qty = 0;
+        let isMine = false;
+
+        if (b) {
+          status = b.phan_loai;
+          qty = Number(b.so_luong) || 0;
+          isMine = isOurCompanyBooking(b);
+        }
+
+        let bgStyle = "bg-white border-emerald-300 text-slate-800 shadow-xs";
+        let statusTag = '<span class="text-[8px] font-bold text-emerald-600 bg-emerald-50 px-1 rounded">Trống</span>';
+
+        // 1. CÔNG TY MÌNH CHỐT: HIỂN THỊ MÀU XANH DA TRỜI ĐẬM
+        if (isMine) {
+          bgStyle = "bg-sky-100 border-sky-500 text-sky-950 shadow-sm ring-1 ring-sky-400";
+          statusTag = `<span class="text-[8px] font-black text-sky-900 bg-sky-200 px-1 rounded">${qty > 0 ? qty.toLocaleString() + ' hs' : 'Cty mình'}</span>`;
+        } 
+        // 2. CÔNG TY KHÁC ĐÔNG KHÁCH (MÀU ĐỎ)
+        else if (status === 'DONG') {
+          bgStyle = "bg-rose-50 border-rose-400 text-rose-950 ring-1 ring-rose-300";
+          statusTag = `<span class="text-[8px] font-black text-rose-700 bg-rose-100 px-1 rounded">${qty > 0 ? qty.toLocaleString() + ' hs' : 'Đông khách'}</span>`;
+        } 
+        // 3. CÔNG TY KHÁC ÍT KHÁCH (MÀU VÀNG/CAM)
+        else if (status === 'NHO') {
+          bgStyle = "bg-amber-50 border-amber-300 text-amber-950";
+          statusTag = `<span class="text-[8px] font-bold text-amber-700 bg-amber-100 px-1 rounded">${qty > 0 ? qty.toLocaleString() + ' hs' : 'Ít khách'}</span>`;
+        }
+
+        const cell = document.createElement('div');
+        cell.className = `flex flex-col justify-between p-1 rounded-lg border ${bgStyle} cursor-pointer hover:border-blue-500 transition-all overflow-hidden`;
+        cell.innerHTML = `
+          <div class="flex justify-between items-start leading-none">
+            <span class="text-[11px] font-black text-slate-900">${day}</span>
+            <span class="text-[8px] font-semibold text-slate-400">${lunar.day === 1 || lunar.day === 15 ? `${lunar.day}/${lunar.month}` : lunar.day}</span>
+          </div>
+          <div class="text-right leading-none">${statusTag}</div>
+        `;
+        cell.onclick = () => openDayModal(day, currentMonth, currentYear, lunar, b);
+        grid.appendChild(cell);
+      }
+    }
+
+    function prevMonth() {
+      const monthsFromStart = (currentYear - START_YEAR) * 12 + (currentMonth - START_MONTH);
+      if (monthsFromStart > 0) {
+        currentMonth--;
+        if (currentMonth < 1) { currentMonth = 12; currentYear--; }
+        renderCalendar();
+      }
+    }
+    function nextMonth() {
+      const monthsFromStart = (currentYear - START_YEAR) * 12 + (currentMonth - START_MONTH);
+      if (monthsFromStart < MAX_MONTHS - 1) {
+        currentMonth++;
+        if (currentMonth > 12) { currentMonth = 1; currentYear++; }
+        renderCalendar();
+      }
+    }
+
+    let touchStartX = 0;
+    const calWrapper = document.getElementById('calendar-wrapper');
+    calWrapper.addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].screenX; }, { passive: true });
+    calWrapper.addEventListener('touchend', e => {
+      const touchEndX = e.changedTouches[0].screenX;
+      if (touchStartX - touchEndX > 50) nextMonth();
+      if (touchEndX - touchStartX > 50) prevMonth();
+    }, { passive: true });
+
+    // ================= 6. TRA CỨU ĐIỂM ĐẾN THEO 1 NGÀY CHỐT =================
+    function openAvailableDestModal() {
+      const modal = document.getElementById('available-dest-modal');
+      const input = document.getElementById('single-day-input');
+      
+      // Nếu đang xem hoặc vừa bấm vào 1 ngày trên lịch thì điền sẵn ngày đó
+      if (activeDayData && activeDayData.day) {
+        input.value = `${activeDayData.day}/${activeDayData.month}/${activeDayData.year}`;
+      } else {
+        input.value = '';
+      }
+
+      modal.classList.remove('hidden');
+      onSearchSingleDay();
+      setTimeout(() => input.focus(), 100);
+    }
+
+    function closeAvailableDestModal() {
+      document.getElementById('available-dest-modal').classList.add('hidden');
+    }
+
+    function clearSingleDayInput() {
+      const input = document.getElementById('single-day-input');
+      input.value = '';
+      document.getElementById('btn-clear-single-day').classList.add('hidden');
+      onSearchSingleDay();
+      input.focus();
+    }
+
+    // Tự động phân tích chuỗi người dùng gõ thành ngày hợp lệ
+    function parseSingleDayInput(rawStr) {
+      const s = String(rawStr || '').trim();
+      if (!s) return null;
+
+      // 1. Gõ đủ ngày tháng năm: 20/11/2026 hoặc 20-11-2026
+      const mFull = s.match(/^(\d{1,2})[/-](\d{1,2})[/-](\d{4})$/);
+      if (mFull) {
+        const d = Number(mFull[1]);
+        const m = Number(mFull[2]);
+        const y = Number(mFull[3]);
+        if (d >= 1 && d <= 31 && m >= 1 && m <= 12) {
+          return { dateStr: `${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`, day: d, month: m, year: y };
+        }
+      }
+
+      // 2. Gõ ngày tháng: 20/11 (lấy năm hiện tại)
+      const mDM = s.match(/^(\d{1,2})[/-](\d{1,2})$/);
+      if (mDM) {
+        const d = Number(mDM[1]);
+        const m = Number(mDM[2]);
+        if (d >= 1 && d <= 31 && m >= 1 && m <= 12) {
+          return { dateStr: `${currentYear}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`, day: d, month: m, year: currentYear };
+        }
+      }
+
+      // 3. Chỉ gõ số ngày: 20 hoặc "ngày 20" (lấy tháng và năm đang hiển thị trên màn hình)
+      const mDay = s.match(/(?:ngày\s+)?(\d{1,2})$/i);
+      if (mDay) {
+        const d = Number(mDay[1]);
+        const daysInMonth = new Date(currentYear, currentMonth, 0).getDate();
+        if (d >= 1 && d <= daysInMonth) {
+          return { dateStr: `${currentYear}-${String(currentMonth).padStart(2, '0')}-${String(d).padStart(2, '0')}`, day: d, month: currentMonth, year: currentYear };
+        }
+      }
+
+      return null;
+    }
+
+    // Hàm tìm kiếm và hiển thị danh sách các điểm cho đúng 1 ngày
+    function onSearchSingleDay() {
+      const input = document.getElementById('single-day-input');
+      const clearBtn = document.getElementById('btn-clear-single-day');
+      const container = document.getElementById('single-day-results');
+      const rawVal = input.value.trim();
+
+      if (rawVal) {
+        clearBtn.classList.remove('hidden');
+      } else {
+        clearBtn.classList.add('hidden');
+      }
+
+      // Chưa nhập ngày
+      if (!rawVal) {
+        container.innerHTML = `
+          <div class="text-center py-10 text-slate-400 space-y-2">
+            <div class="text-3xl">📅</div>
+            <div class="text-xs font-bold text-slate-600">Nhập ngày nhà trường muốn đi vào ô trên</div>
+            <p class="text-[11px] text-slate-400 max-w-xs mx-auto">
+              Chỉ cần gõ <strong>20</strong> hoặc <strong>20/11</strong>, hệ thống sẽ lọc ngay các điểm còn trống hoặc ít khách (&lt;500 hs) vào đúng ngày đó.
+            </p>
+          </div>
+        `;
+        return;
+      }
+
+      const target = parseSingleDayInput(rawVal);
+
+      // Ngày không hợp lệ
+      if (!target) {
+        container.innerHTML = `
+          <div class="text-center py-10 text-slate-400 space-y-1">
+            <div class="text-3xl">⚠️</div>
+            <div class="text-xs font-bold text-amber-700">Ngày nhập chưa đúng định dạng!</div>
+            <p class="text-[11px] text-slate-500">Vui lòng gõ số ngày hợp lệ (Ví dụ: <strong>15</strong>, <strong>20/11</strong> hoặc <strong>20/11/2026</strong>).</p>
+          </div>
+        `;
+        return;
+      }
+
+      const { dateStr, day, month, year } = target;
+      const weekdays = ["Chủ Nhật", "Thứ Hai", "Thứ Ba", "Thứ Tư", "Thứ Năm", "Thứ Sáu", "Thứ Bảy"];
+      const dateObj = new Date(year, month - 1, day);
+      const dayOfWeekStr = weekdays[dateObj.getDay()];
+      const lunar = convertSolar2Lunar(day, month, year);
+
+      // Lọc các điểm đến CÒN TRỐNG hoặc ÍT KHÁCH (< 500 HS) vào đúng ngày này
+      const availableDests = [];
+
+      destinations.forEach(dest => {
+        const b = bookings.find(item => item.destination_id === dest.id && item.date === dateStr);
+        const qty = b ? (Number(b.so_luong) || 0) : 0;
+        const phanLoai = b ? b.phan_loai : 'TRONG';
+        const isMine = isOurCompanyBooking(b);
+
+        // NẾU ĐÔNG KHÁCH (>= 500 HS) HOẶC CÔNG TY MÌNH ĐÃ CHỐT -> LOẠI BỎ KHỎI DANH SÁCH
+        if (phanLoai === 'DONG' || qty >= 500 || isMine) {
+          return;
+        }
+
+        // 1. Trường hợp TRỐNG HOÀN TOÀN
+        if (!b || phanLoai === 'TRONG' || qty === 0) {
+          availableDests.push({
+            dest: dest,
+            status: 'TRONG',
+            qty: 0,
+            html: `
+              <div onclick="selectDestFromAvail('${dest.id}', ${day}, ${month}, ${year})" class="cursor-pointer p-3 rounded-xl bg-white border-2 border-emerald-300 hover:border-emerald-500 hover:bg-emerald-50/40 shadow-xs flex items-center justify-between gap-2.5 transition active:scale-98">
+                <div class="flex items-center gap-2.5 truncate">
+                  <div class="w-3 h-3 rounded-full bg-emerald-500 flex-shrink-0"></div>
+                  <div class="truncate">
+                    <div class="text-xs font-black text-slate-900 truncate">${dest.ten}</div>
+                    <div class="text-[10px] text-slate-500 truncate">📍 ${dest.dia_chi}</div>
+                  </div>
+                </div>
+                <div class="text-right flex-shrink-0">
+                  <span class="inline-block text-[10px] font-black text-emerald-800 bg-emerald-100 border border-emerald-300 px-2 py-0.5 rounded-md">Trống hoàn toàn</span>
+                  <div class="text-[10px] text-emerald-700 font-bold mt-0.5">Tối đa: ${dest.suc_chua.toLocaleString()} hs</div>
+                </div>
+              </div>
+            `
+          });
+        }
+        // 2. Trường hợp ÍT KHÁCH (< 500 HS)
+        else if (qty < 500) {
+          const remaining = Math.max(0, dest.suc_chua - qty);
+          availableDests.push({
+            dest: dest,
+            status: 'NHO',
+            qty: qty,
+            html: `
+              <div onclick="selectDestFromAvail('${dest.id}', ${day}, ${month}, ${year})" class="cursor-pointer p-3 rounded-xl bg-white border-2 border-amber-300 hover:border-amber-500 hover:bg-amber-50/40 shadow-xs flex items-center justify-between gap-2.5 transition active:scale-98">
+                <div class="flex items-center gap-2.5 truncate">
+                  <div class="w-3 h-3 rounded-full bg-amber-500 flex-shrink-0"></div>
+                  <div class="truncate">
+                    <div class="text-xs font-black text-slate-900 truncate">${dest.ten}</div>
+                    <div class="text-[10px] text-slate-500 truncate">📍 ${dest.dia_chi}</div>
+                  </div>
+                </div>
+                <div class="text-right flex-shrink-0">
+                  <span class="inline-block text-[10px] font-black text-amber-800 bg-amber-100 border border-amber-300 px-2 py-0.5 rounded-md">Có ${qty.toLocaleString()} hs</span>
+                  <div class="text-[10px] text-amber-700 font-bold mt-0.5">Còn nhận: ~${remaining.toLocaleString()} hs</div>
+                </div>
+              </div>
+            `
+          });
+        }
+      });
+
+      // Tiêu đề ngày được chọn
+      const headerDateHtml = `
+        <div class="p-3 rounded-xl bg-blue-50 border border-blue-200 flex items-center justify-between shadow-2xs mb-2">
+          <div class="flex items-center gap-2.5">
+            <div class="w-10 h-10 rounded-xl bg-blue-600 text-white flex flex-col items-center justify-center font-black leading-none shadow-xs">
+              <span class="text-sm">${day}</span>
+              <span class="text-[9px] text-blue-200 mt-0.5">T${month}</span>
+            </div>
+            <div>
+              <div class="text-xs font-black text-slate-900">${dayOfWeekStr}, ngày ${day}/${month}/${year}</div>
+              <div class="text-[10px] text-amber-600 font-bold">Âm lịch: Ngày ${lunar.day} tháng ${lunar.month}</div>
+            </div>
+          </div>
+          <span class="text-[10px] font-extrabold text-blue-800 bg-blue-100 px-2.5 py-1 rounded-lg border border-blue-200">
+            ${availableDests.length} điểm khả dụng
+          </span>
+        </div>
+      `;
+
+      if (availableDests.length === 0) {
+        container.innerHTML = headerDateHtml + `
+          <div class="text-center py-8 text-slate-400 space-y-2 bg-white rounded-xl border border-slate-200 p-4">
+            <div class="text-3xl">🚫</div>
+            <div class="text-xs font-bold text-rose-600">Không có điểm nào còn trống hoặc ít khách vào ngày này!</div>
+            <p class="text-[11px] text-slate-500 max-w-xs mx-auto">
+              Tất cả các điểm đến vào ngày <strong>${day}/${month}/${year}</strong> đều đã đông khách (&ge;500 hs), kín lịch hoặc công ty mình đã chốt.
+            </p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = headerDateHtml + `
+        <div class="space-y-2">
+          ${availableDests.map(x => x.html).join('')}
+        </div>
+      `;
+    }
+
+    function selectDestFromAvail(destId, day, month, year) {
+      selectedDestId = destId;
+      currentMonth = month;
+      currentYear = year;
+      document.getElementById('dest-select').value = destId;
+      updateDestPreview();
+      renderCalendar();
+      closeAvailableDestModal();
+      thongBao("Đã chuyển tới lịch của điểm được chọn!", "success");
+    }
+
+    // ================= 7. QUẢN LÝ MODAL CHI TIẾT NGÀY & ĐẶT LỊCH =================
+    function filterTravelCompanyNames(rawName) {
+      if (!rawName) return "Đoàn học sinh";
+
+      const travelKeywords = [
+        'dl', 'travel', 'tour', 'tourium', 'group', 'lữ hành', 'công ty', 'cty', 'skytour', 'opentour',
+        'việt trung', 'tre việt', 'đất việt', 'hương anh', 'đại việt', 'hạnh phúc', 'thế giới',
+        'nguyễn kim', 'quang anh', 'suntour', 'văn hoá việt', 'bản việt', 'phú bình', 'hà thành',
+        'everest', 'phương việt', 'thăng long', 'hưng phát', 'hoàng long', 'tân á', 'quảng việt',
+        'chị hoa', 'chị quế', 'a lân', 'a huệ', 'minh trung', 'minh trí', 'khánh linh', 'thủ đô',
+        'chính ban', 'phúc lâm', 'việt á', 'vin travel', 'vintravel', 'bắc giang', 'bắc trung nam',
+        'vũ tuyển', 'vũ quảng', 'bình minh', 'trải nghiệm việt', 'cánh diều vàng', 'bông cốm xanh',
+        'đông dương', 'quốc tế hn'
+      ];
+
+      const schoolKeywords = ['thpt', 'thcs', 'tiểu học', 'trường', 'mầm non', 'đại học', 'học viện', 'c1', 'c2', 'c3'];
+
+      const parts = String(rawName).split(/[,;+]/);
+      const result = [];
+
+      parts.forEach(p => {
+        const item = p.trim();
+        if (!item) return;
+        const lower = item.toLowerCase();
+
+        if (lower.includes('đám cưới') || lower.includes('tiệc')) {
+          result.push("Tiệc / Sự kiện riêng");
+          return;
+        }
+
+        const isTravel = travelKeywords.some(k => lower.includes(k));
+        const isSchool = schoolKeywords.some(k => lower.includes(k));
+
+        if (isSchool && !isTravel) {
+          result.push(item);
+        } else if (isTravel) {
+          if (lower.includes('tiểu học') || lower.includes('c1')) result.push("Đoàn học sinh Tiểu học");
+          else if (lower.includes('thcs') || lower.includes('c2')) result.push("Đoàn học sinh THCS");
+          else if (lower.includes('thpt') || lower.includes('c3')) result.push("Đoàn học sinh THPT");
+          else if (lower.includes('mầm non') || lower.includes('mn')) result.push("Đoàn mầm non");
+          else if (lower.includes('sinh viên') || lower.includes('sv')) result.push("Đoàn sinh viên");
+        } else {
+          result.push(item);
+        }
+      });
+
+      const uniqueResult = [...new Set(result)];
+      return uniqueResult.length > 0 ? uniqueResult.join(', ') : "Đoàn học sinh";
+    }
+
+    function openDayModal(d, m, y, lunar, booking) {
+      const dest = destinations.find(x => x.id === selectedDestId);
+      const dateStr = `${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+      
+      activeDayData = {
+        day: d,
+        month: m,
+        year: y,
+        dateStr: dateStr,
+        lunar: lunar,
+        booking: booking,
+        dest: dest
+      };
+
+      document.getElementById('modal-date-solar').innerText = `Dương lịch: Ngày ${d}/${m}/${y}`;
+      document.getElementById('modal-date-lunar').innerText = `Âm lịch: Ngày ${lunar.day} tháng ${lunar.month}`;
+      document.getElementById('modal-dest-name').innerText = dest ? dest.ten : '';
+
+      const modalCard = document.getElementById('day-modal-card');
+      const badge = document.getElementById('modal-status-badge');
+      const doanName = document.getElementById('modal-doan-name');
+      const partnerRow = document.getElementById('modal-partner-row');
+      const doanQty = document.getElementById('modal-doan-qty');
+
+      const isMine = isOurCompanyBooking(booking);
+
+      if (booking && booking.phan_loai !== 'TRONG') {
+        if (isMine) {
+          // VIỀN MÀU XANH DA TRỜI KHI LÀ CÔNG TY MÌNH
+          modalCard.className = "bg-white border-2 border-sky-500 rounded-2xl w-full max-w-sm p-4 shadow-2xl ring-2 ring-sky-300 transition-all duration-200";
+          badge.innerText = 'Công ty mình đã chốt';
+          badge.className = 'bg-sky-100 text-sky-800 border border-sky-300 font-bold px-2 py-0.5 rounded text-[11px]';
+          
+          // Hiển thị tên trường + phân hiệu
+          if (booking.phan_hieu) {
+            doanName.innerHTML = `${booking.ten_truong || booking.ten_doan}<br><span class="text-[10px] text-slate-500 font-semibold">(Phân hiệu: ${booking.phan_hieu})</span>`;
+          } else {
+            doanName.innerText = booking.ten_doan || 'Đoàn công ty mình';
+          }
+
+          // HIỂN THỊ DÒNG ĐỐI TÁC: VIỆN KH AN TOÀN
+          partnerRow.classList.remove('hidden');
+        } else {
+          // CÔNG TY KHÁC: VIỀN XÁM BÌNH THƯỜNG, ẨN DÒNG ĐỐI TÁC
+          modalCard.className = "bg-white border border-slate-200 rounded-2xl w-full max-w-sm p-4 shadow-2xl transition-all duration-200";
+          badge.innerText = booking.phan_loai === 'DONG' ? 'Đông khách (≥ 500)' : 'Ít khách (< 500)';
+          badge.className = booking.phan_loai === 'DONG' ? 'bg-rose-100 text-rose-700' : 'bg-amber-100 text-amber-700';
+          doanName.innerText = filterTravelCompanyNames(booking.ten_doan);
+          partnerRow.classList.add('hidden');
+        }
+
+        doanQty.innerText = `${(booking.so_luong || 0).toLocaleString()} học sinh`;
+      } else {
+        modalCard.className = "bg-white border border-slate-200 rounded-2xl w-full max-w-sm p-4 shadow-2xl transition-all duration-200";
+        badge.innerText = 'Còn trống';
+        badge.className = 'bg-emerald-100 text-emerald-700';
+        doanName.innerText = 'Chưa có đoàn';
+        partnerRow.classList.add('hidden');
+        doanQty.innerText = '0 học sinh';
+      }
+      document.getElementById('day-modal').classList.remove('hidden');
+    }
+    function closeDayModal() { document.getElementById('day-modal').classList.add('hidden'); }
+
+    function openBookingFormModal() {
+      if (!activeDayData) return;
+      closeDayModal();
+
+      document.getElementById('book-target-time').innerText = `Ngày ${activeDayData.day}/${activeDayData.month}/${activeDayData.year} - Điểm: ${activeDayData.dest ? activeDayData.dest.ten : ''}`;
+      document.getElementById('book-school-name').value = '';
+      document.getElementById('book-branch-type').value = 'Toàn trường';
+      document.getElementById('book-branch-name').value = '';
+      document.getElementById('box-branch-name').classList.add('hidden');
+      document.getElementById('book-commune').value = '';
+      document.getElementById('book-student-qty').value = '';
+
+      document.getElementById('booking-form-modal').classList.remove('hidden');
+    }
+    function closeBookingFormModal() { document.getElementById('booking-form-modal').classList.add('hidden'); }
+
+    function toggleBranchInput(val) {
+      const box = document.getElementById('box-branch-name');
+      if (val === 'Phân hiệu') {
+        box.classList.remove('hidden');
+      } else {
+        box.classList.add('hidden');
+      }
+    }
+
+    let pendingBookingPayload = null;
+
+    function promptBookingConfirmation() {
+      const schoolName = document.getElementById('book-school-name').value.trim();
+      const branchType = document.getElementById('book-branch-type').value;
+      const branchName = document.getElementById('book-branch-name').value.trim();
+      const commune = document.getElementById('book-commune').value.trim();
+      const qty = Number(document.getElementById('book-student-qty').value);
+
+      if (!schoolName) {
+        thongBao("Vui lòng điền tên trường!", "warning");
+        return;
+      }
+      if (branchType === 'Phân hiệu' && !branchName) {
+        thongBao("Vui lòng điền tên Phân hiệu!", "warning");
+        return;
+      }
+      if (!commune) {
+        thongBao("Vui lòng điền tên xã / địa chỉ!", "warning");
+        return;
+      }
+      if (!qty || qty <= 0) {
+        thongBao("Số lượng học sinh dự kiến phải lớn hơn 0!", "warning");
+        return;
+      }
+
+      const fullSchoolInfo = branchType === 'Phân hiệu' 
+        ? `${schoolName} (${branchName})` 
+        : `${schoolName} (Toàn trường)`;
+
+      const user = getCurrentUser();
+      const destName = activeDayData.dest ? activeDayData.dest.ten : '';
+      const dateDisplay = `${activeDayData.day}/${activeDayData.month}/${activeDayData.year}`;
+
+      pendingBookingPayload = {
+        destination_id: activeDayData.dest ? activeDayData.dest.id : selectedDestId,
+        destination_name: destName,
+        date: activeDayData.dateStr,
+        dateDisplay: dateDisplay,
+        schoolName: schoolName,
+        branchType: branchType,
+        branchName: branchName,
+        fullSchoolInfo: fullSchoolInfo,
+        commune: commune,
+        qty: qty,
+        user_name: user.name,
+        user_phone: user.phone
+      };
+
+      document.getElementById('confirm-prompt-text').innerHTML = `
+        Bạn có xác nhận đăng ký lịch trường <strong class="text-blue-700">${fullSchoolInfo}</strong>, địa chỉ <strong class="text-slate-800">${commune}</strong> vào ngày <strong class="text-emerald-700">${dateDisplay}</strong> đi <strong class="text-blue-700">${destName}</strong>?
+        <div class="mt-2 text-rose-600 font-bold border-t border-slate-200 pt-1.5 text-[11px]">
+          ⚠️ Để đảm bảo 100% chốt được lịch, vui lòng liên hệ bộ phận dịch vụ để xác nhận thông tin.
+        </div>
+      `;
+
+      closeBookingFormModal();
+      document.getElementById('confirm-modal').classList.remove('hidden');
+    }
+    function closeConfirmModal() { document.getElementById('confirm-modal').classList.add('hidden'); }
+
+    async function executeFinalBooking() {
+      if (!pendingBookingPayload) return;
+      closeConfirmModal();
+
+      const p = pendingBookingPayload;
+      const phanLoai = p.qty >= 500 ? 'DONG' : 'NHO';
+
+      // ĐÁNH DẤU RÕ RÀNG ĐOÀN CỦA CÔNG TY MÌNH KÈM ĐỐI TÁC VIỆN KH AN TOÀN
+      const bookingRecord = {
+        id: 'BK_' + Date.now(),
+        destination_id: p.destination_id,
+        destination_name: p.destination_name,
+        date: p.date,
+        ten_doan: p.fullSchoolInfo,
+        ten_truong: p.schoolName,
+        phan_hieu: p.branchName,
+        doi_tac: "Viện KH An Toàn",
+        is_internal: true,
+        dia_chi_xa: p.commune,
+        so_luong: p.qty,
+        phan_loai: phanLoai,
+        nguoi_dat: p.user_name,
+        sdt_dat: p.user_phone
+      };
+
+      const localSaved = localStorage.getItem('app_saved_bookings');
+      let localBookings = localSaved ? JSON.parse(localSaved) : [];
+      const existingIdx = localBookings.findIndex(x => x.destination_id === bookingRecord.destination_id && x.date === bookingRecord.date);
+      if (existingIdx >= 0) {
+        localBookings[existingIdx] = bookingRecord;
+      } else {
+        localBookings.push(bookingRecord);
+      }
+      localStorage.setItem('app_saved_bookings', JSON.stringify(localBookings));
+
+      try {
+        fetch(APPS_SCRIPT_URL, {
+          method: 'POST',
+          mode: 'cors',
+          redirect: 'follow',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({
+            action: 'save_booking',
+            payload: bookingRecord
+          })
+        }).catch(err => console.log("Gửi nền backend:", err));
+      } catch (e) {
+        console.error(e);
+      }
+
+      await fetchData();
+      document.getElementById('success-modal').classList.remove('hidden');
+    }
+    function closeSuccessModal() { document.getElementById('success-modal').classList.add('hidden'); }
+
+    // ================= 8. QUẢN LÝ MODAL DANH SÁCH LỊCH (CHỈ HIỆN CỦA CÔNG TY MÌNH) =================
+    function openBookingListModal() {
+      document.getElementById('list-search-input').value = '';
+      renderBookingList();
+      document.getElementById('booking-list-modal').classList.remove('hidden');
+    }
+    function closeBookingListModal() { document.getElementById('booking-list-modal').classList.add('hidden'); }
+
+    function toggleHidePastBookings() {
+      hidePastBookings = !hidePastBookings;
+      const eyeIcon = document.getElementById('eye-icon');
+      const eyeText = document.getElementById('eye-text');
+      const btn = document.getElementById('btn-toggle-eye');
+
+      if (hidePastBookings) {
+        eyeIcon.innerHTML = `
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"></path>
+            <path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"></path>
+            <path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"></path>
+            <line x1="2" y1="2" x2="22" y2="22"></line>
+          </svg>
+        `;
+        eyeText.innerText = "Đang ẩn ngày cũ";
+        btn.className = "px-2.5 py-1.5 rounded-lg border text-xs font-bold flex items-center gap-1 bg-amber-50 border-amber-200 text-amber-700 hover:bg-amber-100 transition flex-shrink-0";
+        thongBao("Đã ẩn các chương trình trước ngày hôm nay", "warning");
+      } else {
+        eyeIcon.innerHTML = `
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
+            <circle cx="12" cy="12" r="3"></circle>
+          </svg>
+        `;
+        eyeText.innerText = "Hiện tất cả";
+        btn.className = "px-2.5 py-1.5 rounded-lg border text-xs font-bold flex items-center gap-1 bg-blue-50 border-blue-200 text-blue-700 hover:bg-blue-100 transition flex-shrink-0";
+        thongBao("Đang hiển thị toàn bộ lịch (kể cả ngày đã qua)", "success");
+      }
+      renderBookingList();
+    }
+
+    // CHỈ HIỆN CÁC TRƯỜNG DO CÔNG TY MÌNH CHỐT
+    function renderBookingList() {
+      const container = document.getElementById('booking-cards-container');
+      const keyword = document.getElementById('list-search-input').value.toLowerCase().trim();
+      container.innerHTML = '';
+
+      const now = new Date();
+      const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+
+      // LỌC CHẶT CHẼ: CHỈ LẤY ĐOÀN CỦA CÔNG TY MÌNH
+      let list = bookings.filter(b => {
+        const isMine = isOurCompanyBooking(b);
+        return isMine && b.phan_loai && b.phan_loai !== 'TRONG';
+      });
+
+      list.sort((a, b) => (a.date > b.date ? 1 : -1));
+
+      if (hidePastBookings) {
+        list = list.filter(b => b.date >= todayStr);
+      }
+
+      if (keyword) {
+        list = list.filter(b => {
+          const dest = destinations.find(d => d.id === b.destination_id);
+          const destName = dest ? dest.ten.toLowerCase() : '';
+          const school = (b.ten_doan || '').toLowerCase();
+          const person = (b.nguoi_dat || '').toLowerCase();
+          const commune = (b.dia_chi_xa || '').toLowerCase();
+          return school.includes(keyword) || destName.includes(keyword) || person.includes(keyword) || commune.includes(keyword);
+        });
+      }
+
+      if (list.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-8 text-slate-400">
+            <div class="text-2xl mb-1">📭</div>
+            <div class="text-xs font-semibold">Công ty mình chưa có lịch chốt nào phù hợp.</div>
+          </div>
+        `;
+        return;
+      }
+
+      list.forEach(item => {
+        const dest = destinations.find(d => d.id === item.destination_id);
+        const destName = dest ? dest.ten : (item.destination_name || 'Chưa rõ điểm đến');
+        const phone = item.sdt_dat || '';
+        const person = item.nguoi_dat || 'Chưa cập nhật';
+        const commune = item.dia_chi_xa || 'Chưa ghi xã';
+
+        let dateFormatted = item.date;
+        if (item.date && item.date.includes('-')) {
+          const parts = item.date.split('-');
+          if (parts.length === 3) dateFormatted = `${parts[2]}/${parts[1]}/${parts[0]}`;
+        }
+
+        const card = document.createElement('div');
+        card.className = "p-2.5 rounded-xl bg-white border-2 border-sky-400 shadow-sm space-y-1.5 transition hover:shadow-md";
+        card.innerHTML = `
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-black text-sky-700 flex items-center gap-1">
+              <span>📅</span> <span>${dateFormatted}</span>
+            </span>
+            <span class="text-[9px] font-bold px-2 py-0.5 rounded-full border bg-sky-100 text-sky-800 border-sky-300">
+              Công ty mình
+            </span>
+          </div>
+
+          <div class="text-xs font-bold text-slate-900 leading-tight">
+            🏫 ${item.ten_doan || 'Chưa rõ tên trường'}
+          </div>
+
+          <div class="text-[11px] font-bold text-sky-700 flex items-center gap-1">
+            <span>🤝 Đối tác:</span>
+            <span>Viện KH An Toàn</span>
+          </div>
+
+          <div class="text-[11px] text-slate-600 flex flex-wrap gap-x-2 gap-y-0.5">
+            <span>📍 <strong>Điểm đến:</strong> ${destName}</span>
+            <span>🏡 <strong>Xã:</strong> ${commune}</span>
+            <span>👥 <strong>Dự kiến:</strong> <strong class="text-blue-600">${(item.so_luong || 0).toLocaleString()}</strong> hs</span>
+          </div>
+
+          <div class="flex items-center justify-between border-t border-slate-100 pt-1.5 mt-1">
+            <div class="text-[10px] text-slate-500 truncate">
+              👤 Người chốt: <strong class="text-slate-800">${person}</strong> ${phone ? `(${phone})` : ''}
+            </div>
+
+            ${phone ? `
+              <a href="tel:${phone}" class="flex-shrink-0 flex items-center gap-1 bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] font-bold px-2.5 py-1 rounded-lg transition active:scale-95 shadow-xs">
+                <span>📞</span> <span>Gọi ngay</span>
+              </a>
+            ` : `
+              <span class="text-[10px] text-slate-400 italic">Không có SĐT</span>
+            `}
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    // ================= 9. QUẢN LÝ MODAL QUẢN TRỊ (CÓ TÌM KIẾM ĐIỂM ĐẾN) =================
+    function openAdminModal() {
+      const sel = document.getElementById('import-dest-select');
+      sel.innerHTML = '';
+      destinations.forEach(d => {
+        const opt = document.createElement('option');
+        opt.value = d.id;
+        opt.innerText = `${d.ten} (Sức chứa: ${d.suc_chua})`;
+        if (d.id === selectedDestId) opt.selected = true;
+        sel.appendChild(opt);
+      });
+      const searchBox = document.getElementById('admin-dest-search');
+      if (searchBox) searchBox.value = '';
+      renderAdminDestList();
+      document.getElementById('admin-modal').classList.remove('hidden');
+    }
+    function closeAdminModal() { document.getElementById('admin-modal').classList.add('hidden'); }
+
+    // HÀM RENDER DANH SÁCH ĐIỂM ĐẾN KÈM BỘ LỌC TÌM KIẾM REALTIME
+    function renderAdminDestList() {
+      const list = document.getElementById('admin-dest-list');
+      const searchInput = document.getElementById('admin-dest-search');
+      const keyword = searchInput ? searchInput.value.toLowerCase().trim() : '';
+      list.innerHTML = '';
+
+      let filtered = destinations;
+      if (keyword) {
+        filtered = destinations.filter(d => 
+          (d.ten || '').toLowerCase().includes(keyword) || 
+          (d.dia_chi || '').toLowerCase().includes(keyword)
+        );
+      }
+
+      const countBadge = document.getElementById('admin-dest-count');
+      if (countBadge) countBadge.innerText = `${filtered.length}/${destinations.length} điểm`;
+
+      if (filtered.length === 0) {
+        list.innerHTML = '<div class="text-center py-4 text-slate-400 text-xs italic">Không tìm thấy điểm đến nào phù hợp.</div>';
+        return;
+      }
+
+      filtered.forEach(d => {
+        const item = document.createElement('div');
+        item.className = 'flex justify-between items-center p-2 rounded-xl bg-slate-50 border border-slate-200';
+        item.innerHTML = `
+          <div class="truncate mr-2">
+            <div class="font-bold text-slate-800 text-xs truncate">${d.ten}</div>
+            <div class="text-[10px] text-slate-500 truncate">${d.dia_chi} | Sức chứa: ${d.suc_chua.toLocaleString()}</div>
+          </div>
+          <div class="flex gap-1.5 flex-shrink-0">
+            <button onclick="editDest('${d.id}')" class="px-2.5 py-1 rounded-md bg-amber-500 hover:bg-amber-600 text-white font-bold text-[10px] transition">Sửa</button>
+            <button onclick="deleteDest('${d.id}')" class="px-2.5 py-1 rounded-md bg-rose-600 hover:bg-rose-700 text-white font-bold text-[10px] transition">Xóa</button>
+          </div>
+        `;
+        list.appendChild(item);
+      });
+    }
+
+    function editDest(id) {
+      const d = destinations.find(x => x.id === id);
+      if (!d) return;
+      document.getElementById('form-dest-id').value = d.id;
+      document.getElementById('form-dest-name').value = d.ten;
+      document.getElementById('form-dest-capacity').value = d.suc_chua;
+      document.getElementById('form-dest-address').value = d.dia_chi;
+      document.getElementById('form-dest-img').value = d.anh_url;
+      thongBao("Đã tải dữ liệu lên form để sửa!", "warning");
+    }
+
+    function resetDestForm() {
+      document.getElementById('form-dest-id').value = '';
+      document.getElementById('form-dest-name').value = '';
+      document.getElementById('form-dest-capacity').value = '';
+      document.getElementById('form-dest-address').value = '';
+      document.getElementById('form-dest-img').value = '';
+    }
+
+    async function submitSaveDestination() {
+      const idVal = document.getElementById('form-dest-id').value;
+      const isEditing = Boolean(idVal);
+      const payload = {
+        id: idVal,
+        ten: document.getElementById('form-dest-name').value.trim(),
+        suc_chua: Number(document.getElementById('form-dest-capacity').value),
+        dia_chi: document.getElementById('form-dest-address').value.trim(),
+        anh_url: document.getElementById('form-dest-img').value.trim()
+      };
+
+      if (!payload.ten) {
+        thongBao("Vui lòng nhập tên điểm đến!", "warning");
+        return;
+      }
+
+      try {
+        await fetch(APPS_SCRIPT_URL, {
+          method: 'POST',
+          mode: 'cors',
+          redirect: 'follow',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({ action: 'save_destination', payload: payload })
+        });
+        resetDestForm();
+        await fetchData();
+        openAdminModal();
+        thongBao(isEditing ? "Đã cập nhật điểm đến thành công!" : "Đã tạo mới điểm đến thành công!", "success");
+      } catch (err) {
+        thongBao("Lỗi khi lưu: " + err.message, "error");
+      }
+    }
+
+    async function deleteDest(id) {
+      const item = destinations.find(x => x.id === id);
+      const ten = item ? item.ten : "điểm đến";
+      if (!confirm(`Xác nhận xóa hoàn toàn điểm đến "${ten}"?`)) return;
+
+      try {
+        await fetch(APPS_SCRIPT_URL, {
+          method: 'POST',
+          mode: 'cors',
+          redirect: 'follow',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({ action: 'delete_destination', destination_id: id })
+        });
+        await fetchData();
+        openAdminModal();
+        thongBao(`Đã xóa thành công "${ten}"!`, "success");
+      } catch (err) {
+        thongBao("Lỗi khi xóa: " + err.message, "error");
+      }
+    }
+
+    // ================= 10. HÀM NHẬP DỮ LIỆU TỰ ĐỘNG (EXCEL & GEMINI AI) =================
+    async function submitAiImport() {
+      let destId = document.getElementById('import-dest-select').value;
+      if (!destId) destId = selectedDestId;
+
+      const fileInput = document.getElementById('excel-file-input');
+      const textInput = document.getElementById('import-text-input');
+      const textContent = textInput.value.trim();
+      const hasFile = fileInput.files.length > 0;
+      const hasText = Boolean(textContent);
+
+      if (!hasFile && !hasText) {
+        thongBao("Vui lòng đính kèm file Excel hoặc dán tin nhắn văn bản!", "warning");
+        return;
+      }
+
+      const btn = document.getElementById('btn-run-ai');
+      btn.innerText = "⏳ Đang phân tích dữ liệu...";
+      btn.disabled = true;
+
+      let countFromExcel = 0;
+      let countFromText = 0;
+
+      try {
+        // --- PHẦN A: XỬ LÝ FILE EXCEL ---
+        if (hasFile) {
+          btn.innerText = "⏳ Đang đọc chuẩn file Excel...";
+          const file = fileInput.files[0];
+          const data = await file.arrayBuffer();
+          const workbook = XLSX.read(data, { cellDates: false });
+
+          const recordsMap = {};
+
+          workbook.SheetNames.forEach(sheetName => {
+            if (sheetName.includes('2026') || sheetName.includes('2027') || sheetName.includes('Tháng') || sheetName.includes('T')) {
+              const sheet = workbook.Sheets[sheetName];
+              const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+
+              let currentDate = null;
+
+              rows.forEach(row => {
+                if (!row || row.length === 0) return;
+
+                const colA = String(row[0] || '').trim().toUpperCase();
+                if (colA.includes('TỔNG') || colA.includes('TOTAL')) return;
+
+                const cellDateVal = row[1];
+                let parsedDate = null;
+
+                if (typeof cellDateVal === 'number' && cellDateVal > 40000 && cellDateVal < 60000) {
+                  const utcDays = Math.floor(cellDateVal - 25569);
+                  const dateObj = new Date(utcDays * 86400 * 1000);
+                  const y = dateObj.getUTCFullYear();
+                  const m = String(dateObj.getUTCMonth() + 1).padStart(2, '0');
+                  const d = String(dateObj.getUTCDate()).padStart(2, '0');
+                  parsedDate = `${y}-${m}-${d}`;
+                } else if (typeof cellDateVal === 'string') {
+                  const mYMD = cellDateVal.match(/(\d{4})[-/](\d{1,2})[-/](\d{1,2})/);
+                  const mDMY = cellDateVal.match(/(\d{1,2})[-/](\d{1,2})[-/](\d{4})/);
+                  if (mYMD) parsedDate = `${mYMD[1]}-${mYMD[2].padStart(2, '0')}-${mYMD[3].padStart(2, '0')}`;
+                  else if (mDMY) parsedDate = `${mDMY[3]}-${mDMY[2].padStart(2, '0')}-${mDMY[1].padStart(2, '0')}`;
+                }
+
+                if (parsedDate) currentDate = parsedDate;
+
+                if (currentDate && (currentDate.startsWith('2026') || currentDate.startsWith('2027'))) {
+                  const rawTeam = String(row[2] || '').trim();
+                  const rawQty = Number(String(row[3] || '').replace(/[^0-9]/g, '')) || 0;
+                  const rawTotalDay = Number(String(row[4] || '').replace(/[^0-9]/g, '')) || 0;
+
+                  if (rawTeam === 'Tên đoàn' || rawTeam === 'Đơn vị du lịch') return;
+
+                  const cleanName = filterTravelCompanyNames(rawTeam);
+                  const rowQty = rawTotalDay > 0 ? rawTotalDay : rawQty;
+
+                  if (rawTeam || rowQty > 0) {
+                    if (!recordsMap[currentDate]) {
+                      recordsMap[currentDate] = { teams: [], maxQty: 0 };
+                    }
+                    if (cleanName && !recordsMap[currentDate].teams.includes(cleanName)) {
+                      recordsMap[currentDate].teams.push(cleanName);
+                    }
+                    if (rowQty > recordsMap[currentDate].maxQty) {
+                      recordsMap[currentDate].maxQty = rowQty;
+                    }
+                  }
+                }
+              });
+            }
+          });
+
+          const extractedExcel = Object.keys(recordsMap).map(dateStr => {
+            const item = recordsMap[dateStr];
+            const qty = item.maxQty;
+            return {
+              date: dateStr,
+              ten_doan: item.teams.join(', ') || 'Đoàn học sinh',
+              so_luong: qty,
+              phan_loai: qty >= 500 ? 'DONG' : (qty > 0 ? 'NHO' : 'TRONG'),
+              is_internal: false // Lịch nạp từ Excel là của cty khác
+            };
+          });
+
+          if (extractedExcel.length > 0) {
+            const resExcel = await fetch(APPS_SCRIPT_URL, {
+              method: 'POST',
+              mode: 'cors',
+              redirect: 'follow',
+              headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+              body: JSON.stringify({
+                action: 'batch_upsert_bookings',
+                destination_id: destId,
+                records: extractedExcel
+              })
+            });
+            const resJsonExcel = await resExcel.json();
+            countFromExcel = resJsonExcel.count || extractedExcel.length;
+          }
+        }
+
+        // --- PHẦN B: XỬ LÝ TIN NHẮN VĂN BẢN QUA GEMINI AI ---
+        if (hasText) {
+          btn.innerText = "⏳ Gemini AI đang đọc ngữ nghĩa tin nhắn...";
+
+          const currentDest = destinations.find(d => d.id === destId);
+          const destName = currentDest ? currentDest.ten : 'Điểm đến';
+          const destCap = currentDest ? currentDest.suc_chua : 700;
+
+          const resText = await fetch(APPS_SCRIPT_URL, {
+            method: 'POST',
+            mode: 'cors',
+            redirect: 'follow',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({
+              action: 'parse_and_upsert_bookings',
+              destination_id: destId,
+              destination_name: destName,
+              suc_chua: destCap,
+              month: currentMonth,
+              year: currentYear,
+              raw_text: textContent
+            })
+          });
+
+          const resJsonText = await resText.json();
+
+          if (resJsonText.status === 'success') {
+            countFromText = resJsonText.count || 0;
+          } else {
+            throw new Error(resJsonText.message || "AI gặp sự cố khi đọc tin nhắn");
+          }
+        }
+
+        fileInput.value = '';
+        textInput.value = '';
+        await fetchData();
+        closeAdminModal();
+
+        if (hasFile && hasText) {
+          thongBao(`Đã cập nhật ${countFromExcel} ngày từ Excel & ${countFromText} ngày từ tin nhắn!`, "success");
+        } else if (hasFile) {
+          thongBao(`Đã nạp thành công ${countFromExcel} ngày lịch từ file Excel!`, "success");
+        } else {
+          thongBao(`Đã phân tích & cập nhật thành công ${countFromText} ngày kín lịch từ tin nhắn!`, "success");
+        }
+
+      } catch (err) {
+        thongBao("Lỗi: " + err.message, "error");
+      } finally {
+        btn.innerText = "✨ Phân Tích & Cập Nhật Lịch Khác Biệt";
+        btn.disabled = false;
+      }
+    }
+
+    // ================= KHỞI TẠO =================
+    window.onload = function() {
+      checkUserProfile();
+      fetchData();
+    };
+  </script>
+</body>
+</html>
