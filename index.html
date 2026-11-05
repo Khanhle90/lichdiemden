@@ -385,7 +385,7 @@
           👤
         </div>
         <h2 class="text-base font-extrabold text-slate-800">Thông Tin Điều Hành</h2>
-        <p class="text-xs text-slate-500">Vui lòng đăng ký Họ tên & SĐT để thực hiện đặt lịch và lưu dấu vết</p>
+        <p class="text-xs text-slate-500">Điền họ tên và Số điện thoại của bạn để truy cập. Máy sẽ tự ghi nhớ thông tin của bạn cho các lần truy cập tiếp theo. Thông tin Họ tên và SĐT này sẽ được sử dụng để </p>
       </div>
 
       <div class="space-y-3 text-xs">
@@ -963,7 +963,7 @@
           item.innerHTML = `
             <span class="truncate text-xs ${isSelected ? 'text-white' : 'text-slate-800'}">${d.ten}</span>
             <span class="text-[10px] font-extrabold ml-2 flex-shrink-0 px-2 py-0.5 rounded ${isSelected ? 'bg-blue-500 text-white border border-blue-400' : 'bg-blue-100 text-blue-800 border border-blue-200'}">
-              Tối đa: ${(d.suc_chua || 0).toLocaleString()} hs
+              ${(d.suc_chua || 0).toLocaleString()}
             </span>
           `;
           item.onclick = (e) => {
@@ -1145,7 +1145,7 @@
       destinations.forEach(d => {
         const opt = document.createElement('option');
         opt.value = d.id;
-        opt.innerText = `${d.ten} (Sức chứa: ${(d.suc_chua || 0).toLocaleString()} hs)`;
+        opt.innerText = `${d.ten} (max:${(d.suc_chua || 0).toLocaleString()} hs)`;
         if (d.id === manualDestId) opt.selected = true;
         sel.appendChild(opt);
       });
@@ -1987,7 +1987,7 @@
               <span>📅</span> <span>${dateFormatted}</span>
             </span>
             <span class="text-[9px] font-bold px-2 py-0.5 rounded-full border bg-sky-100 text-sky-800 border-sky-300">
-              Viện KH An Toàn (Safe Edu)
+              Viện KH An Toàn
             </span>
           </div>
 
