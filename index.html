@@ -7,7 +7,7 @@
   <!-- Tailwind CSS & SheetJS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800;900&display=swap" rel="stylesheet">
   <style>
     body { font-family: 'Plus Jakarta Sans', sans-serif; touch-action: pan-y; -webkit-tap-highlight-color: transparent; }
     .hide-scrollbar::-webkit-scrollbar { display: none; }
@@ -18,21 +18,21 @@
 
   <!-- ================= TOP 1/4 (22vh): HEADER & DROPDOWN ĐIỂM ĐẾN ================= -->
   <header class="h-[22vh] flex-none bg-white border-b border-slate-200 px-3 py-2 flex flex-col justify-between shadow-sm z-10">
-    <!-- Hàng 1: Tiêu đề & Cụm nút: Thoát tài khoản - Danh sách lịch - Quản trị -->
     <div class="flex items-center justify-between">
-      <div class="flex items-center gap-2">
-        <div class="w-7 h-7 rounded-lg bg-blue-600 flex items-center justify-center text-white text-xs shadow-sm shadow-blue-200">
-          📅
+      <div class="flex items-center gap-2 min-w-0">
+        <!-- 2 Logo thay thế quyển lịch góc trên bên trái -->
+        <div class="flex items-center gap-1.5 flex-shrink-0">
+          <img src="Logo ABA.png" alt="Logo ABA" class="h-8 w-auto max-w-[55px] object-contain">
+          <img src="logo safe edu.PNG" alt="Safe Edu" class="h-8 w-auto max-w-[45px] object-contain">
         </div>
-        <div>
-          <h1 class="text-xs font-extrabold text-slate-800 uppercase tracking-tight">TÌNH TRẠNG LỊCH ĐIỂM ĐẾN</h1>
-          <p id="user-display-tag" class="text-[9px] text-slate-400 font-medium leading-none">Hệ thống theo dõi & điều hành lịch tour</p>
+        <div class="truncate">
+          <h1 class="text-xs font-extrabold text-slate-800 uppercase tracking-tight truncate">THÔNG TIN ĐIỂM ĐẾN</h1>
+          <p id="user-display-tag" class="text-[9px] text-slate-400 font-medium leading-none truncate">Hệ thống theo dõi & điều hành lịch tour</p>
         </div>
       </div>
 
-      <!-- Cụm nút công cụ -->
-      <div class="flex items-center gap-1.5">
-        <!-- Nút Thoát Tài Khoản -->
+      <!-- Cụm nút công cụ: Đã xóa icon đồng hồ, xóa cái bút, nút quản trị duy nhất hình bánh răng không viền hộp -->
+      <div class="flex items-center gap-1.5 flex-shrink-0">
         <button onclick="logoutAccount()" title="Đăng xuất tài khoản" class="w-7 h-7 rounded-lg bg-rose-50 hover:bg-rose-100 border border-rose-200 text-rose-600 flex items-center justify-center transition active:scale-95 shadow-xs">
           <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
@@ -41,7 +41,6 @@
           </svg>
         </button>
 
-        <!-- Nút Danh Sách Lịch Đã Chốt (Chỉ hiện trường công ty mình) -->
         <button onclick="openBookingListModal()" title="Danh sách lịch công ty đã chốt" class="w-7 h-7 rounded-lg bg-blue-50 hover:bg-blue-100 border border-blue-200 text-blue-700 flex items-center justify-center transition active:scale-95 shadow-xs">
           <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
             <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
@@ -52,27 +51,41 @@
           </svg>
         </button>
 
-        <!-- Thẻ Quản Trị -->
-        <button onclick="openAdminModal()" class="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-blue-600 text-white text-[11px] font-bold shadow-sm transition active:scale-95">
-          <span>⚙</span>
-          <span>Quản trị</span>
+        <!-- Nút Quản trị: Duy nhất hình bánh răng, không có viền hộp bên ngoài -->
+        <button onclick="openAdminModal()" title="Quản trị hệ thống" class="p-1 text-slate-700 hover:text-blue-600 transition active:scale-90 flex items-center justify-center">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+          </svg>
         </button>
       </div>
     </div>
 
-    <!-- Hàng 2: DROPDOWN CHỌN ĐIỂM ĐẾN & SỨC CHỨA CÙNG MỘ HÀNG -->
-    <div class="flex items-center gap-2 my-auto">
-      <div class="flex-1">
-        <select id="dest-select" onchange="onSelectDestination(this.value)" class="w-full bg-blue-50 border border-blue-300 text-blue-900 text-xs font-bold rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-500 truncate cursor-pointer shadow-sm">
-          <!-- Render danh sách điểm đến -->
-        </select>
+    <!-- Hàng 2: DROPDOWN CHỌN ĐIỂM ĐẾN & SỨC CHỨA (Ảnh 1 khi mở có sức chứa, Ảnh 2 khi chọn xong chỉ hiện tên) -->
+    <div class="flex items-center gap-2 my-auto relative">
+      <div class="flex-1 relative" id="dest-dropdown-wrapper">
+        <!-- Nút hiển thị khi đóng: Chuẩn như Ảnh 2 -->
+        <button id="dest-dropdown-btn" type="button" onclick="toggleDestDropdown(event)" class="w-full bg-blue-50/50 hover:bg-blue-50 border-2 border-blue-500 text-blue-900 text-xs font-bold rounded-xl px-3 py-1.5 flex items-center justify-between focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-xs cursor-pointer transition">
+          <span id="dest-dropdown-label" class="truncate font-extrabold text-blue-950">Đang tải điểm đến...</span>
+          <svg xmlns="http://www.w3.org/2000/svg" id="dest-dropdown-chevron" class="w-3.5 h-3.5 text-blue-700 flex-shrink-0 ml-1 transition-transform duration-200" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+        </button>
+
+        <!-- Danh sách khi xổ xuống: Chuẩn như Ảnh 1 kèm số lượng tối đa -->
+        <div id="dest-dropdown-menu" class="hidden absolute left-0 right-0 top-full mt-1 bg-white border border-slate-200 rounded-xl shadow-2xl z-50 overflow-hidden max-h-60 overflow-y-auto divide-y divide-slate-100">
+        </div>
+
+        <!-- Hidden select để đồng bộ tương thích -->
+        <select id="dest-select" onchange="onSelectDestination(this.value)" class="hidden"></select>
       </div>
-      <span id="badge-capacity" class="flex-shrink-0 text-[11px] font-extrabold text-blue-700 bg-blue-100 border border-blue-200 px-2.5 py-1.5 rounded-lg shadow-sm whitespace-nowrap">
+
+      <span id="badge-capacity" class="flex-shrink-0 text-[11px] font-extrabold text-blue-700 bg-blue-100 border border-blue-200 px-3 py-1.5 rounded-xl shadow-xs whitespace-nowrap">
         Tối đa: 0 hs
       </span>
     </div>
 
-    <!-- Hàng 3: CHÚ GIẢI MÀU CÓ THÊM THẺ "CTY MÌNH" (XANH DA TRỜI) -->
+    <!-- Hàng 3: CHÚ GIẢI MÀU & NÚT TÌM KIẾM THEO NGÀY -->
     <div class="flex items-center justify-between text-[10px] font-bold border-t border-slate-100 pt-1 flex-wrap gap-1">
       <div class="flex items-center gap-1">
         <button onclick="openAvailableDestModal()" title="Tra cứu điểm còn trống theo ngày" class="flex items-center justify-center w-5 h-5 rounded-md bg-emerald-600 hover:bg-emerald-700 text-white shadow-xs transition active:scale-95 text-[10px]">
@@ -83,9 +96,8 @@
         </div>
       </div>
 
-      <!-- Thẻ Công ty mình (Xanh da trời) -->
       <div class="flex items-center gap-1 text-sky-800 bg-sky-50 px-1.5 py-0.5 rounded-full border border-sky-300 shadow-xs">
-        <span class="w-1.5 h-1.5 rounded-full bg-sky-500"></span> VAT
+        <span class="w-1.5 h-1.5 rounded-full bg-sky-500"></span> Safe Edu
       </div>
 
       <div class="flex items-center gap-1 text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded-full border border-amber-200">
@@ -97,9 +109,8 @@
     </div>
   </header>
 
-  <!-- ================= MIDDLE 1/2 (54vh): MA TRẬN LỊCH 100% VỪA VẶN ================= -->
+  <!-- ================= MIDDLE 1/2 (54vh): MA TRẬN LỊCH ================= -->
   <main id="calendar-wrapper" class="h-[54vh] flex-1 flex flex-col justify-between px-2.5 py-1.5 bg-slate-50 overflow-hidden min-h-0">
-    <!-- Thanh điều hướng tháng -->
     <div class="flex-none flex items-center justify-between bg-white px-2.5 py-1 rounded-lg border border-slate-200 shadow-sm mb-1">
       <button id="btn-prev-month" onclick="prevMonth()" class="px-2.5 py-0.5 rounded-md text-[11px] font-bold text-slate-600 bg-slate-100 hover:bg-blue-50 hover:text-blue-600 disabled:opacity-30 disabled:cursor-not-allowed transition">
         ◀ Tháng trước
@@ -114,18 +125,15 @@
       </button>
     </div>
 
-    <!-- Hàng tiêu đề thứ -->
     <div class="flex-none grid grid-cols-7 gap-1 text-center text-[10px] font-black text-slate-400 uppercase tracking-wider mb-0.5">
       <div>T2</div><div>T3</div><div>T4</div><div>T5</div><div>T6</div><div class="text-blue-600">T7</div><div class="text-rose-600">CN</div>
     </div>
 
-    <!-- Lưới lịch 42 ô (6 hàng x 7 cột) -->
     <div id="calendar-grid" class="flex-1 min-h-0 grid grid-cols-7 grid-rows-6 gap-1 h-full w-full">
-      <!-- Render ngày qua JS -->
     </div>
   </main>
 
-  <!-- ================= BOTTOM 1/4 (24vh): ẢNH FULL-WIDTH & ĐỊA CHỈ GÓC TRÁI ================= -->
+  <!-- ================= BOTTOM 1/4 (24vh): ẢNH & ĐỊA CHỈ ================= -->
   <footer class="h-[24vh] flex-none w-full relative overflow-hidden bg-slate-900 border-t border-slate-300">
     <img id="dest-image" src="" alt="Ảnh điểm đến" class="w-full h-full object-cover">
     <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-transparent pointer-events-none"></div>
@@ -141,7 +149,7 @@
     </div>
   </footer>
 
-  <!-- ================= BANNER THÔNG BÁO NỔI (TOAST BANNER) ================= -->
+  <!-- ================= BANNER TOAST ================= -->
   <div id="toast-box" class="fixed top-3 left-1/2 -translate-x-1/2 z-[9999] pointer-events-none transition-all duration-300 transform -translate-y-12 opacity-0">
     <div id="toast-content" class="flex items-center gap-2 px-4 py-2 rounded-full shadow-2xl text-xs font-bold border">
       <span id="toast-icon" class="text-sm"></span>
@@ -149,24 +157,213 @@
     </div>
   </div>
 
-  <!-- ================= MODAL: TRA CỨU ĐIỂM ĐẾN THEO 1 NGÀY CHỐT ================= -->
-  <div id="available-dest-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden z-50 flex items-center justify-center p-3">
+  <!-- ================= MODAL: CẬP NHẬT THỦ CÔNG (z-[100]) ================= -->
+  <div id="manual-calendar-modal" class="fixed inset-0 bg-white z-[100] flex flex-col h-[100dvh] w-full overflow-hidden select-none hidden animate-in zoom-in-95 duration-150">
+    <!-- Header Modal -->
+    <div class="flex items-center justify-between px-3.5 py-2 border-b border-slate-200 bg-slate-50 flex-none">
+      <div class="flex items-center gap-2 truncate">
+        <div class="w-7 h-7 rounded-lg bg-amber-500 text-white flex items-center justify-center text-xs font-bold shadow-xs flex-shrink-0">
+          ✏️
+        </div>
+        <div class="truncate">
+          <h2 class="text-xs font-black text-slate-800 uppercase tracking-tight truncate">CẬP NHẬT THỦ CÔNG TÌNH TRẠNG LỊCH</h2>
+          <p class="text-[9px] text-slate-400 truncate">Click vào từng ngày để đổi trạng thái xoay vòng</p>
+        </div>
+      </div>
+      <button onclick="closeManualCalendarModal()" class="w-7 h-7 rounded-full bg-slate-200 hover:bg-slate-300 text-slate-600 font-bold flex items-center justify-center text-xs flex-shrink-0 ml-2">✕</button>
+    </div>
+
+    <!-- Hàng chọn Điểm Đến -->
+    <div class="px-3 py-1.5 bg-white border-b border-slate-100 flex-none">
+      <div class="flex items-center gap-1.5 w-full">
+        <span class="text-base flex-shrink-0" title="Địa điểm">📍</span>
+        <select id="manual-dest-select" onchange="onManualChangeDestination(this.value)" class="flex-1 min-w-0 bg-amber-50 border border-amber-300 text-amber-950 text-xs font-bold rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-amber-500 truncate cursor-pointer shadow-xs">
+        </select>
+      </div>
+
+      <!-- Chú giải -->
+      <div class="flex items-center justify-between text-[10px] font-bold bg-slate-50 px-2 py-1 rounded-lg border border-slate-200 mt-1.5">
+        <span class="text-slate-500">Quy tắc:</span>
+        <span class="text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">1. Trống</span>
+        <span class="text-slate-400">➔</span>
+        <span class="text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200">2. Ít khách</span>
+        <span class="text-slate-400">➔</span>
+        <span class="text-rose-700 bg-rose-50 px-1.5 py-0.5 rounded border border-rose-200">3. Kín lịch</span>
+        <span class="text-slate-400">➔ 1</span>
+      </div>
+    </div>
+
+    <!-- Thân Bảng Lịch Tháng -->
+    <div class="flex-1 flex flex-col justify-between p-2 bg-slate-50 overflow-hidden min-h-0">
+      <div class="flex-none flex items-center justify-between bg-white px-2 py-1 rounded-lg border border-slate-200 shadow-xs mb-1">
+        <button onclick="manualPrevMonth()" class="px-2 py-0.5 rounded text-[11px] font-bold text-slate-600 bg-slate-100 hover:bg-amber-100 transition">
+          ◀ Tháng trước
+        </button>
+        
+        <div class="flex items-center gap-2">
+          <div id="manual-month-display" class="text-xs font-black text-amber-700 uppercase leading-none">THÁNG 11 / 2026</div>
+          <button onclick="manualSetAllMonthDong()" title="Đánh dấu kín lịch toàn bộ tất cả các ngày trong tháng" class="px-2 py-0.5 rounded-md bg-rose-600 hover:bg-rose-700 text-white text-[10px] font-extrabold shadow-xs transition active:scale-95 flex items-center gap-0.5">
+            <span>🔴</span> <span>Toàn bộ</span>
+          </button>
+        </div>
+
+        <button onclick="manualNextMonth()" class="px-2 py-0.5 rounded text-[11px] font-bold text-slate-600 bg-slate-100 hover:bg-amber-100 transition">
+          Tháng sau ▶
+        </button>
+      </div>
+
+      <div class="flex-none grid grid-cols-7 gap-1 text-center text-[10px] font-black text-slate-400 uppercase tracking-wider mb-0.5">
+        <div>T2</div><div>T3</div><div>T4</div><div>T5</div><div>T6</div><div class="text-blue-600">T7</div><div class="text-rose-600">CN</div>
+      </div>
+
+      <div id="manual-calendar-grid" class="flex-1 min-h-0 grid grid-cols-7 grid-rows-6 gap-1 h-full w-full">
+      </div>
+    </div>
+
+    <!-- Footer Modal -->
+    <div class="p-2.5 bg-white border-t border-slate-200 flex items-center justify-between gap-2 flex-none shadow-sm">
+      <span id="manual-change-count" class="text-[11px] font-bold text-slate-500">Chưa có thay đổi</span>
+      <div class="flex items-center gap-2">
+        <button onclick="closeManualCalendarModal()" class="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition">
+          Hủy bỏ
+        </button>
+        <button onclick="promptSaveManualChanges()" class="px-4 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold shadow-sm transition active:scale-95 flex items-center gap-1">
+          <span>💾</span> <span>Lưu Thay Đổi</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= MODAL: XÁC NHẬN LƯU CẬP NHẬT THỦ CÔNG (z-[200]) ================= -->
+  <div id="manual-confirm-modal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm hidden z-[200] flex items-center justify-center p-4">
+    <div class="bg-white border border-slate-200 rounded-2xl w-full max-w-sm p-4 shadow-2xl space-y-3 animate-in zoom-in-95 duration-150">
+      <div class="flex items-center gap-2 text-amber-500">
+        <span class="text-xl">⚠️</span>
+        <h3 class="text-sm font-extrabold text-slate-800">Xác Nhận Thay Đổi Lịch</h3>
+      </div>
+
+      <div id="manual-confirm-prompt-text" class="text-xs text-slate-700 leading-relaxed font-medium bg-slate-50 p-3 rounded-xl border border-slate-200 max-h-48 overflow-y-auto space-y-1">
+      </div>
+
+      <div class="grid grid-cols-2 gap-2 pt-1">
+        <button onclick="closeManualConfirmModal()" class="w-full bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-2 rounded-xl text-xs transition">
+          Từ Chối
+        </button>
+        <button onclick="executeSaveManualChanges()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold py-2 rounded-xl text-xs shadow-sm transition active:scale-95">
+          Xác Nhận Lưu
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= MODAL: CẢNH BÁO KHI SỬA CHƯƠNG TRÌNH VIỆN AN TOÀN (z-[200]) ================= -->
+  <div id="warning-blue-edit-modal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm hidden z-[200] flex items-center justify-center p-4">
+    <div class="bg-white border-2 border-rose-500 rounded-2xl w-full max-w-sm p-4 shadow-2xl space-y-3 animate-in zoom-in-95 duration-150">
+      <div class="flex items-center gap-2 text-rose-600">
+        <span class="text-2xl">⚠️</span>
+        <h3 class="text-sm font-extrabold text-slate-800">Cảnh Báo Chỉnh Sửa Lịch</h3>
+      </div>
+
+      <div class="text-xs text-slate-700 leading-relaxed font-semibold bg-rose-50 p-3 rounded-xl border border-rose-200">
+        Bạn có xác định chỉnh sửa lịch của <strong class="text-blue-700">Viện An toàn</strong> không? Việc chỉnh sửa này sẽ <span class="text-rose-600 font-black underline">xóa hoàn toàn dữ liệu đăng ký trước đó</span>.
+      </div>
+
+      <div class="grid grid-cols-2 gap-2 pt-1">
+        <button onclick="rejectBlueEdit()" class="w-full bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-2 rounded-xl text-xs transition">
+          Từ Chối
+        </button>
+        <button onclick="confirmBlueEdit()" class="w-full bg-rose-600 hover:bg-rose-700 text-white font-extrabold py-2 rounded-xl text-xs shadow-sm transition active:scale-95">
+          Xác Nhận
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= MODAL: CẢNH BÁO KHI ĐẶT LỊCH (Ô ĐỎ / VÀNG) (z-[200]) ================= -->
+  <div id="alert-red-booking-modal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm hidden z-[200] flex items-center justify-center p-4">
+    <div class="bg-white border border-slate-200 rounded-2xl w-full max-w-xs p-5 shadow-2xl text-center space-y-3 animate-in zoom-in-95 duration-150">
+      <div class="w-12 h-12 bg-rose-100 text-rose-600 rounded-full flex items-center justify-center mx-auto text-2xl font-black">
+        🚫
+      </div>
+      <h3 class="text-sm font-extrabold text-slate-800">Không Thể Đặt Lịch</h3>
+      <p class="text-xs text-rose-600 font-bold leading-relaxed">
+        Không thể đặt lịch do địa điểm đã đông khách!
+      </p>
+      <button onclick="closeRedAlertModal()" class="w-full bg-slate-900 hover:bg-blue-600 text-white font-bold py-2 rounded-xl text-xs transition">
+        Xác Nhận
+      </button>
+    </div>
+  </div>
+
+  <div id="confirm-yellow-booking-modal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm hidden z-[200] flex items-center justify-center p-4">
+    <div class="bg-white border border-amber-300 rounded-2xl w-full max-w-sm p-4 shadow-2xl space-y-3 animate-in zoom-in-95 duration-150">
+      <div class="flex items-center gap-2 text-amber-600">
+        <span class="text-2xl">⚠️</span>
+        <h3 class="text-sm font-extrabold text-slate-800">Lưu Ý Số Lượng Khách</h3>
+      </div>
+
+      <div id="yellow-alert-prompt-text" class="text-xs text-slate-700 leading-relaxed font-semibold bg-amber-50 p-3 rounded-xl border border-amber-200">
+        Lưu ý: Địa điểm đang có đoàn khách đã đăng ký trước.
+      </div>
+
+      <div class="grid grid-cols-2 gap-2 pt-1">
+        <button onclick="closeYellowAlertModal(false)" class="w-full bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-2 rounded-xl text-xs transition">
+          Từ Chối
+        </button>
+        <button onclick="closeYellowAlertModal(true)" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-extrabold py-2 rounded-xl text-xs shadow-sm transition active:scale-95">
+          Tiếp Tục Đặt
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= MODAL: BẢNG LỊCH SỬ CHỈNH SỬA (z-[100]) ================= -->
+  <div id="history-modal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm hidden z-[100] flex items-center justify-center p-3">
+    <div class="bg-white border border-slate-200 rounded-2xl w-full max-w-2xl h-[90vh] flex flex-col shadow-2xl overflow-hidden">
+      <div class="flex items-center justify-between px-3.5 py-2.5 border-b border-slate-100 bg-slate-50 flex-none">
+        <div class="flex items-center gap-2">
+          <div class="w-7 h-7 rounded-lg bg-indigo-600 text-white flex items-center justify-center text-xs font-bold shadow-xs">
+            📜
+          </div>
+          <div>
+            <h2 class="text-xs font-black text-slate-800 uppercase tracking-wide">Bảng Tổng Hợp Lịch Sử Chỉnh Sửa</h2>
+            <p class="text-[9px] text-slate-400">Đồng bộ trực tiếp từ Google Sheet (LICH_SU_SUA)</p>
+          </div>
+        </div>
+        <button onclick="closeHistoryModal()" class="w-7 h-7 rounded-full bg-slate-200 hover:bg-slate-300 text-slate-600 font-bold flex items-center justify-center text-xs">✕</button>
+      </div>
+
+      <div class="p-2.5 bg-white border-b border-slate-200 flex items-center gap-2 flex-none">
+        <div class="flex-1 relative">
+          <input type="text" id="history-search-input" oninput="renderHistoryList()" placeholder="Tìm theo địa điểm, ngày, người sửa, trường cũ..." class="w-full bg-slate-100 border border-slate-200 rounded-lg pl-7 pr-2 py-1.5 text-xs text-slate-800 font-medium focus:ring-1 focus:ring-indigo-500 outline-none">
+          <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs">🔍</span>
+        </div>
+        <button onclick="clearHistoryLog()" class="px-2.5 py-1.5 rounded-lg border text-[10px] font-bold bg-rose-50 border-rose-200 text-rose-700 hover:bg-rose-100 transition flex-shrink-0">
+          Xóa Lịch Sử Online
+        </button>
+      </div>
+
+      <div id="history-container" class="p-3 overflow-y-auto flex-1 space-y-2 bg-slate-50 text-xs">
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= MODAL: TRA CỨU ĐIỂM ĐẾN THEO 1 NGÀY (z-[100]) ================= -->
+  <div id="available-dest-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden z-[100] flex items-center justify-center p-3">
     <div class="bg-white border border-slate-200 rounded-2xl w-full max-w-md max-h-[85vh] flex flex-col shadow-2xl overflow-hidden">
-      <!-- Header -->
       <div class="flex items-center justify-between px-4 py-3 border-b border-slate-100 bg-slate-50 flex-none">
         <div class="flex items-center gap-2">
           <div class="w-7 h-7 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center text-sm font-bold">
             🔍
           </div>
           <div>
-            <h2 class="text-xs font-black text-slate-800 uppercase tracking-wide">Tra Cứu Điểm Đến Theo Ngày</h2>
-            <p class="text-[10px] text-slate-400">Xem các điểm còn trống hoặc ít khách (&lt;500 hs)</p>
+            <h2 class="text-xs font-black text-slate-800 uppercase tracking-wide">Tra Cứu Điểm Đến Khả Dụng</h2>
+            <p class="text-[10px] text-slate-400">Tìm điểm đến còn trống theo ngày</p>
           </div>
         </div>
         <button onclick="closeAvailableDestModal()" class="w-7 h-7 rounded-full bg-slate-200 hover:bg-slate-300 text-slate-600 font-bold flex items-center justify-center text-xs">✕</button>
       </div>
 
-      <!-- Ô nhập 1 ngày duy nhất -->
       <div class="p-3 bg-white border-b border-slate-200 flex-none">
         <label class="block text-[11px] font-bold text-slate-700 mb-1">Nhập ngày nhà trường muốn đi:</label>
         <div class="relative flex items-center">
@@ -174,28 +371,21 @@
           <span class="absolute left-3 text-sm">📅</span>
           <button onclick="clearSingleDayInput()" id="btn-clear-single-day" class="hidden absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 font-bold text-xs p-1">✕</button>
         </div>
-        <div class="flex items-center justify-between text-[10px] text-slate-500 mt-1.5 px-0.5">
-          <span>Gõ <strong>20</strong> (tháng hiện tại) hoặc <strong>20/11</strong></span>
-          <span class="text-emerald-700 font-bold">● Trống / ● &lt;500 hs</span>
-        </div>
       </div>
 
-      <!-- Khu vực hiển thị kết quả ngày đó -->
-      <div id="single-day-results" class="p-3 overflow-y-auto flex-1 space-y-2 bg-slate-50 min-h-[220px]">
-        <!-- Render kết quả qua JavaScript -->
-      </div>
+      <div id="single-day-results" class="p-3 overflow-y-auto flex-1 space-y-2 bg-slate-50 min-h-[220px]"></div>
     </div>
   </div>
 
-  <!-- ================= MODAL: ĐĂNG NHẬP THÔNG TIN CÁ NHÂN LẦN ĐẦU ================= -->
-  <div id="account-modal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-md hidden z-[100] flex items-center justify-center p-4">
+  <!-- ================= MODAL: TÀI KHOẢN (z-[120]) ================= -->
+  <div id="account-modal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-md hidden z-[120] flex items-center justify-center p-4">
     <div class="bg-white border border-slate-200 rounded-2xl w-full max-w-sm p-5 shadow-2xl space-y-4">
       <div class="text-center space-y-1">
         <div class="w-12 h-12 rounded-2xl bg-blue-100 text-blue-700 mx-auto flex items-center justify-center text-xl font-bold">
           👤
         </div>
-        <h2 class="text-base font-extrabold text-slate-800">Thông Tin Tài Khoản</h2>
-        <p class="text-xs text-slate-500">Vui lòng đăng ký họ tên & SĐT để thực hiện đặt và lưu lịch các trường</p>
+        <h2 class="text-base font-extrabold text-slate-800">Thông Tin Điều Hành</h2>
+        <p class="text-xs text-slate-500">Vui lòng đăng ký Họ tên & SĐT để thực hiện đặt lịch và lưu dấu vết</p>
       </div>
 
       <div class="space-y-3 text-xs">
@@ -215,10 +405,10 @@
     </div>
   </div>
 
-  <!-- ================= MODAL: CHI TIẾT NGÀY ĐƯỢC CHỌN (VIỀN XANH DA TRỜI NẾU CỦA CTY MÌNH) ================= -->
-  <div id="day-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
-    <div id="day-modal-card" class="bg-white border border-slate-200 rounded-2xl w-full max-w-sm p-4 shadow-2xl transition-all duration-200">
-      <div class="flex justify-between items-start border-b border-slate-100 pb-2.5">
+  <!-- ================= MODAL: CHI TIẾT NGÀY & ĐA ĐOÀN (z-[100]) ================= -->
+  <div id="day-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden z-[100] flex items-center justify-center p-3">
+    <div id="day-modal-card" class="bg-white border border-slate-200 rounded-2xl w-full max-w-sm max-h-[90vh] flex flex-col p-4 shadow-2xl transition-all duration-200 overflow-hidden">
+      <div class="flex justify-between items-start border-b border-slate-100 pb-2.5 flex-none">
         <div>
           <h3 id="modal-date-solar" class="text-base font-extrabold text-blue-700 leading-tight">Ngày Dương</h3>
           <p id="modal-date-lunar" class="text-xs font-bold text-amber-600 mt-0.5">Âm lịch: </p>
@@ -226,28 +416,30 @@
         <button onclick="closeDayModal()" class="w-7 h-7 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 font-bold flex items-center justify-center">✕</button>
       </div>
 
-      <div class="my-3 space-y-2 text-xs">
+      <div class="my-3 space-y-2 text-xs flex-1 overflow-y-auto pr-1">
         <div class="flex justify-between"><span class="text-slate-500 font-medium">Điểm đến:</span> <span id="modal-dest-name" class="font-bold text-slate-800"></span></div>
         <div class="flex justify-between items-center"><span class="text-slate-500 font-medium">Trạng thái:</span> <span id="modal-status-badge" class="font-bold px-2 py-0.5 rounded text-[11px]"></span></div>
         
-        <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 mt-2 space-y-1.5">
-          <div class="flex justify-between items-start">
-            <span class="text-slate-500">Trường đăng ký:</span> 
-            <span id="modal-doan-name" class="font-bold text-slate-800 text-right">-</span>
+        <!-- Khung chứa danh sách đoàn đa đoàn -->
+        <div class="mt-2 space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-slate-500 font-bold text-[11px]">Danh sách đoàn tiếp đón:</span>
+            <span id="modal-group-count" class="text-[10px] font-extrabold text-blue-600"></span>
           </div>
 
-          <!-- Thông tin Đối tác Viện KH An Toàn (Hiện dưới tên trường nếu là công ty mình) -->
-          <div id="modal-partner-row" class="hidden flex justify-between items-center bg-sky-50 text-sky-800 px-2 py-1 rounded-lg border border-sky-200 font-bold">
-            <span>Đối tác:</span>
-            <span class="text-sky-900">Viện KH An Toàn</span>
+          <div id="modal-groups-container" class="space-y-2 max-h-52 overflow-y-auto pr-0.5">
           </div>
 
-          <div class="flex justify-between"><span class="text-slate-500">Số lượng:</span> <span id="modal-doan-qty" class="font-black text-blue-600">-</span></div>
+          <!-- Thống kê tổng học sinh -->
+          <div class="p-2.5 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-between text-xs">
+            <span class="font-bold text-slate-700">Tổng số học sinh trong ngày:</span>
+            <span id="modal-total-qty" class="font-black text-blue-700 text-sm">0 hs</span>
+          </div>
         </div>
       </div>
 
-      <div class="grid grid-cols-2 gap-2 mt-4">
-        <button onclick="openBookingFormModal()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-2 rounded-xl flex items-center justify-center gap-1.5 transition shadow-sm active:scale-95">
+      <div class="grid grid-cols-2 gap-2 mt-2 pt-2 border-t border-slate-100 flex-none">
+        <button onclick="handleUserClickBooking()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-2 rounded-xl flex items-center justify-center gap-1.5 transition shadow-sm active:scale-95">
           <span>📝</span> <span>Đặt Lịch</span>
         </button>
         <button onclick="closeDayModal()" class="w-full bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-bold py-2 rounded-xl transition">
@@ -257,8 +449,8 @@
     </div>
   </div>
 
-  <!-- ================= MODAL: CỬA SỔ ĐIỀN THÔNG TIN ĐẶT LỊCH ================= -->
-  <div id="booking-form-modal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm hidden z-55 flex items-center justify-center p-3">
+  <!-- ================= MODAL: FORM ĐẶT LỊCH (z-[150]) ================= -->
+  <div id="booking-form-modal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm hidden z-[150] flex items-center justify-center p-3">
     <div class="bg-white border border-slate-200 rounded-2xl w-full max-w-sm p-4 shadow-2xl space-y-3">
       <div class="flex justify-between items-center border-b border-slate-100 pb-2">
         <div>
@@ -270,7 +462,7 @@
 
       <div class="space-y-2 text-xs">
         <div>
-          <label class="block font-bold text-slate-600 mb-0.5 text-[10px]">Thông tin trường:</label>
+          <label class="block font-bold text-slate-600 mb-0.5 text-[10px]">Tên trường:</label>
           <input type="text" id="book-school-name" placeholder="VD: THCS Giảng Võ" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-2.5 py-1.5 text-slate-800 font-semibold focus:ring-2 focus:ring-blue-500 outline-none">
         </div>
 
@@ -294,7 +486,7 @@
 
         <div>
           <label class="block font-bold text-slate-600 mb-0.5 text-[10px]">Số lượng học sinh dự kiến:</label>
-          <input type="number" id="book-student-qty" placeholder="VD: 650" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-2.5 py-1.5 text-slate-800 font-semibold focus:ring-2 focus:ring-blue-500 outline-none">
+          <input type="number" id="book-student-qty" placeholder="VD: 450" class="w-full bg-slate-50 border border-slate-300 rounded-lg px-2.5 py-1.5 text-slate-800 font-semibold focus:ring-2 focus:ring-blue-500 outline-none">
         </div>
       </div>
 
@@ -306,8 +498,8 @@
     </div>
   </div>
 
-  <!-- ================= MODAL: HỎI LẠI XÁC NHẬN ĐĂNG KÝ ================= -->
-  <div id="confirm-modal" class="fixed inset-0 bg-slate-900/75 backdrop-blur-sm hidden z-60 flex items-center justify-center p-4">
+  <!-- ================= MODAL: HỎI LẠI XÁC NHẬN ĐĂNG KÝ (z-[200]) ================= -->
+  <div id="confirm-modal" class="fixed inset-0 bg-slate-900/75 backdrop-blur-sm hidden z-[200] flex items-center justify-center p-4">
     <div class="bg-white border border-slate-200 rounded-2xl w-full max-w-sm p-4 shadow-2xl space-y-3">
       <div class="flex items-center gap-2 text-amber-500">
         <span class="text-xl">⚠️</span>
@@ -315,7 +507,6 @@
       </div>
 
       <div id="confirm-prompt-text" class="text-xs text-slate-700 leading-relaxed font-medium bg-slate-50 p-3 rounded-xl border border-slate-200">
-        <!-- Render nội dung xác nhận -->
       </div>
 
       <div class="grid grid-cols-2 gap-2 pt-1">
@@ -329,15 +520,15 @@
     </div>
   </div>
 
-  <!-- ================= MODAL: THÔNG BÁO ĐĂNG KÝ THÀNH CÔNG ================= -->
-  <div id="success-modal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm hidden z-65 flex items-center justify-center p-4">
+  <!-- ================= MODAL: THÀNH CÔNG (z-[220]) ================= -->
+  <div id="success-modal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm hidden z-[220] flex items-center justify-center p-4">
     <div class="bg-white border border-slate-200 rounded-2xl w-full max-w-xs p-5 shadow-2xl text-center space-y-3 animate-in zoom-in-95 duration-200">
       <div class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto text-2xl font-black">
         ✓
       </div>
       <h3 class="text-base font-extrabold text-slate-800">Đăng Ký Thành Công!</h3>
       <p class="text-xs text-slate-500 leading-relaxed">
-        Lịch đã được ghi nhận vào hệ thống. Vui lòng liên hệ bộ phận dịch vụ để đảm bảo 100% chốt lịch.
+        Lịch đã được ghi nhận trực tiếp lên Google Sheets. Vui lòng liên hệ bộ phận dịch vụ để đảm bảo 100% chốt lịch.
       </p>
       <button onclick="closeSuccessModal()" class="w-full bg-slate-900 hover:bg-blue-600 text-white font-bold py-2 rounded-xl text-xs transition">
         Hoàn Tất
@@ -345,15 +536,15 @@
     </div>
   </div>
 
-  <!-- ================= MODAL: DANH SÁCH LỊCH ĐÃ CHỐT (CHỈ HIỆN CỦA CTY MÌNH) ================= -->
-  <div id="booking-list-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden z-50 flex items-center justify-center p-3">
+  <!-- ================= MODAL: DANH SÁCH LỊCH ĐÃ CHỐT (z-[100]) ================= -->
+  <div id="booking-list-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden z-[100] flex items-center justify-center p-3">
     <div class="bg-white border border-slate-200 rounded-2xl w-full max-w-lg h-[88vh] flex flex-col shadow-2xl overflow-hidden">
       <div class="flex items-center justify-between px-3 py-2.5 border-b border-slate-100 bg-slate-50 flex-none">
         <div class="flex items-center gap-1.5">
           <span class="text-base">📋</span>
           <div>
             <h2 class="text-xs font-black text-slate-800 uppercase tracking-wide">Danh Sách Lịch Công Ty Đã Chốt</h2>
-            <p class="text-[9px] text-slate-400">Chỉ hiển thị các trường do công ty mình đặt lịch</p>
+            <p class="text-[9px] text-slate-400">Chỉ hiển thị các trường do Viện KH An Toàn đặt lịch</p>
           </div>
         </div>
         <button onclick="closeBookingListModal()" class="w-7 h-7 rounded-full bg-slate-200 hover:bg-slate-300 text-slate-600 font-bold flex items-center justify-center text-xs">✕</button>
@@ -365,15 +556,8 @@
           <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs">🔍</span>
         </div>
 
-        <button id="btn-toggle-eye" onclick="toggleHidePastBookings()" title="Ẩn/Hiện các lịch trước ngày tra cứu" class="px-2.5 py-1.5 rounded-lg border text-xs font-bold flex items-center gap-1 bg-amber-50 border-amber-200 text-amber-700 hover:bg-amber-100 transition flex-shrink-0">
-          <span id="eye-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"></path>
-              <path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"></path>
-              <path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"></path>
-              <line x1="2" y1="2" x2="22" y2="22"></line>
-            </svg>
-          </span>
+        <button id="btn-toggle-eye" onclick="toggleHidePastBookings()" class="px-2.5 py-1.5 rounded-lg border text-xs font-bold flex items-center gap-1 bg-amber-50 border-amber-200 text-amber-700 hover:bg-amber-100 transition flex-shrink-0">
+          <span id="eye-icon">👁️</span>
           <span id="eye-text" class="text-[10px]">Đang ẩn ngày cũ</span>
         </button>
       </div>
@@ -382,8 +566,8 @@
     </div>
   </div>
 
-  <!-- ================= MODAL: BẢNG QUẢN TRỊ (CÓ Ô TÌM KIẾM ĐIỂM ĐẾN) ================= -->
-  <div id="admin-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden z-50 flex items-center justify-center p-3">
+  <!-- ================= MODAL: QUẢN TRỊ (z-[100]) ================= -->
+  <div id="admin-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden z-[100] flex items-center justify-center p-3">
     <div class="bg-white border border-slate-200 rounded-2xl w-full max-w-xl max-h-[92vh] flex flex-col shadow-2xl overflow-hidden">
       <div class="flex justify-between items-center px-4 py-3 border-b border-slate-100 bg-slate-50">
         <div class="flex items-center gap-2">
@@ -394,28 +578,69 @@
       </div>
 
       <div class="p-3.5 overflow-y-auto flex-1 space-y-3.5 text-xs">
-        <!-- Form Điểm đến -->
+        <div class="grid grid-cols-2 gap-2">
+          <div class="p-3 bg-amber-50/70 rounded-xl border border-amber-300 flex flex-col justify-between">
+            <div>
+              <h4 class="font-extrabold text-amber-900 uppercase text-[11px] flex items-center gap-1">
+                <span>✏️</span> <span>Cập Nhật Thủ Công</span>
+              </h4>
+            </div>
+            <button onclick="closeAdminModal(); openManualCalendarModal();" class="mt-2 w-full py-1.5 rounded-lg bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs shadow-xs transition active:scale-95">
+              Mở Bảng Lịch
+            </button>
+          </div>
+
+          <div class="p-3 bg-indigo-50/70 rounded-xl border border-indigo-300 flex flex-col justify-between">
+            <div>
+              <h4 class="font-extrabold text-indigo-900 uppercase text-[11px] flex items-center gap-1">
+                <span>📜</span> <span>Lịch Sử Chỉnh Sửa</span>
+              </h4>
+            </div>
+            <button onclick="closeAdminModal(); openHistoryModal();" class="mt-2 w-full py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-xs transition active:scale-95">
+              Xem Lịch Sử
+            </button>
+          </div>
+        </div>
+
+        <div class="p-3 bg-blue-50/70 rounded-xl border border-blue-200 space-y-2.5">
+          <h3 class="font-extrabold text-blue-800 uppercase text-[11px] flex items-center gap-1">
+            <span>📁</span> <span>PHÂN TÍCH TỰ ĐỘNG BẰNG AI</span>
+          </h3>
+          <div>
+            <label class="block text-slate-600 font-medium mb-1 text-[10px]">Chọn điểm đến cần cập nhật:</label>
+            <select id="import-dest-select" class="w-full bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-slate-800 font-semibold focus:ring-1 focus:ring-blue-500 outline-none"></select>
+          </div>
+          <div>
+            <label class="block text-slate-600 font-medium mb-1 text-[10px]">Tải file Excel (.xlsx, .xls) danh sách đoàn:</label>
+            <input type="file" id="excel-file-input" accept=".xlsx, .xls" class="block w-full text-[10px] text-slate-500 file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-[10px] file:font-bold file:bg-blue-600 file:text-white hover:file:bg-blue-700 cursor-pointer">
+          </div>
+          <button id="btn-run-ai" onclick="submitAiFileImport()" class="w-full py-2 rounded-xl bg-blue-600 hover:bg-blue-700 font-bold text-white shadow-md shadow-blue-200 flex items-center justify-center gap-1.5 transition active:scale-95">
+            <span>✨ Phân Tích File & Cập Nhật Lịch Tự Động</span>
+          </button>
+        </div>
+
+        <!-- Form thông tin điểm đến: Tỷ lệ 2/3 Tên - 1/3 Sức chứa -->
         <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
           <h3 class="font-extrabold text-blue-700 uppercase text-[11px] flex items-center gap-1">
             <span>🏛</span> <span>Thông Tin Điểm Đến</span>
           </h3>
           <input type="hidden" id="form-dest-id">
-          <div class="grid grid-cols-2 gap-2">
-            <div>
+          <div class="grid grid-cols-3 gap-2">
+            <div class="col-span-2">
               <label class="block text-slate-500 font-medium mb-1 text-[10px]">Tên điểm đến:</label>
               <input type="text" id="form-dest-name" placeholder="VD: Phù Đổng Green Park" class="w-full bg-white border border-slate-200 rounded-lg px-2 py-1 text-slate-800 font-medium focus:ring-1 focus:ring-blue-500 outline-none">
             </div>
-            <div>
-              <label class="block text-slate-500 font-medium mb-1 text-[10px]">Sức chứa tối đa (hs):</label>
+            <div class="col-span-1">
+              <label class="block text-slate-500 font-medium mb-1 text-[10px]">Sức chứa (hs):</label>
               <input type="number" id="form-dest-capacity" placeholder="VD: 2000" class="w-full bg-white border border-slate-200 rounded-lg px-2 py-1 text-slate-800 font-medium focus:ring-1 focus:ring-blue-500 outline-none">
             </div>
           </div>
           <div>
-            <label class="block text-slate-500 font-medium mb-1 text-[10px]">Địa chỉ:</label>
+            <label class="block text-slate-500 font-medium mb-1 text-[10px]">Địa chỉ chi tiết:</label>
             <input type="text" id="form-dest-address" placeholder="VD: Gia Lâm, Hà Nội" class="w-full bg-white border border-slate-200 rounded-lg px-2 py-1 text-slate-800 font-medium focus:ring-1 focus:ring-blue-500 outline-none">
           </div>
           <div>
-            <label class="block text-slate-500 font-medium mb-1 text-[10px]">Link ảnh minh họa (ImgBB, Google Drive, Direct URL):</label>
+            <label class="block text-slate-500 font-medium mb-1 text-[10px]">Đường dẫn link ảnh cảnh quan:</label>
             <input type="text" id="form-dest-img" placeholder="https://..." class="w-full bg-white border border-slate-200 rounded-lg px-2 py-1 text-slate-800 font-medium focus:ring-1 focus:ring-blue-500 outline-none">
           </div>
           <div class="flex gap-2 justify-end pt-1">
@@ -424,36 +649,12 @@
           </div>
         </div>
 
-        <!-- Nhập lịch qua Excel / AI -->
-        <div class="p-3 bg-blue-50/60 rounded-xl border border-blue-200 space-y-2">
-          <h3 class="font-extrabold text-blue-800 uppercase text-[11px] flex items-center gap-1">
-            <span>✨</span> <span>Google Gemini API: Cập Nhật Lịch Tự Động</span>
-          </h3>
-          <div>
-            <label class="block text-slate-600 font-medium mb-1 text-[10px]">Chọn điểm đến cần cập nhật:</label>
-            <select id="import-dest-select" class="w-full bg-white border border-slate-200 rounded-lg px-2 py-1 text-slate-800 font-semibold focus:ring-1 focus:ring-blue-500 outline-none"></select>
-          </div>
-          <div>
-            <label class="block text-slate-600 font-medium mb-1 text-[10px]">File Excel (.xlsx) danh sách đoàn (nếu có):</label>
-            <input type="file" id="excel-file-input" accept=".xlsx, .xls" class="block w-full text-[10px] text-slate-500 file:mr-2 file:py-0.5 file:px-2 file:rounded file:border-0 file:text-[10px] file:font-bold file:bg-blue-600 file:text-white hover:file:bg-blue-700">
-          </div>
-          <div>
-            <label class="block text-slate-600 font-medium mb-1 text-[10px]">Hoặc dán văn bản / tin nhắn thông báo chỗ từ đối tác:</label>
-            <textarea id="import-text-input" rows="2" placeholder="VD: Lịch bên em hiện tại vẫn còn trống các ngày trong tuần, ngoại trừ ngày 13/11, 20/11 và các ngày cuối tuần." class="w-full bg-white border border-slate-200 rounded-lg p-1.5 text-slate-800 font-medium focus:ring-1 focus:ring-blue-500 outline-none"></textarea>
-          </div>
-          <button id="btn-run-ai" onclick="submitAiImport()" class="w-full py-2 rounded-xl bg-blue-600 hover:bg-blue-700 font-bold text-white shadow-md shadow-blue-200 flex items-center justify-center gap-1.5 transition active:scale-95">
-            <span>✨ Phân Tích & Cập Nhật Lịch Khác Biệt</span>
-          </button>
-        </div>
-
-        <!-- DANH SÁCH ĐIỂM ĐẾN ĐANG QUẢN LÝ (CÓ THANH TÌM KIẾM MỚI BỔ SUNG) -->
         <div class="space-y-1.5">
           <div class="flex items-center justify-between">
-            <h3 class="font-extrabold text-slate-500 uppercase text-[11px]">Danh sách điểm đến đang quản lý</h3>
+            <h3 class="font-extrabold text-slate-500 uppercase text-[11px]">Quản lý danh sách điểm đến</h3>
             <span id="admin-dest-count" class="text-[10px] text-slate-400 font-bold"></span>
           </div>
           
-          <!-- Ô tìm kiếm điểm đến mới thêm -->
           <div class="relative">
             <input type="text" id="admin-dest-search" oninput="renderAdminDestList()" placeholder="Tìm tên điểm đến hoặc địa chỉ..." class="w-full bg-slate-50 border border-slate-300 rounded-lg pl-7 pr-2 py-1 text-xs text-slate-800 font-medium focus:ring-1 focus:ring-blue-500 outline-none">
             <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs">🔍</span>
@@ -477,22 +678,46 @@
     let currentMonth = START_MONTH;
     let destinations = [];
     let bookings = [];
+    let editHistoryLogs = [];
     let selectedDestId = null;
 
     let activeDayData = null;
     let hidePastBookings = true;
 
-    let availYear = START_YEAR;
-    let availMonth = START_MONTH;
+    let manualYear = START_YEAR;
+    let manualMonth = START_MONTH;
+    let manualDestId = null;
+    let manualChanges = {};
 
-    // HÀM KIỂM TRA ĐOÀN CÓ PHẢI CỦA CÔNG TY MÌNH (CHỐT QUA ĐẶT LỊCH) HAY CỦA CTY KHÁC
+    let pendingBlueEditTarget = null;
+
+    // Chuẩn hóa chuỗi ngày bất kỳ về định dạng YYYY-MM-DD
+    function normalizeDateStr(raw) {
+      if (!raw) return "";
+      const s = String(raw).trim();
+      if (/^\d{4}-\d{2}-\d{2}$/.test(s)) return s;
+      
+      const d = new Date(s);
+      if (!isNaN(d.getTime())) {
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        return `${y}-${m}-${day}`;
+      }
+
+      const mDMY = s.match(/^(\d{1,2})[/-](\d{1,2})[/-](\d{4})/);
+      if (mDMY) {
+        return `${mDMY[3]}-${mDMY[2].padStart(2, '0')}-${mDMY[1].padStart(2, '0')}`;
+      }
+      return s;
+    }
+
+    // Kiểm tra lịch có phải của công ty mình (VAT / Viện KH An Toàn)
     function isOurCompanyBooking(b) {
       if (!b) return false;
-      return Boolean(
-        b.is_internal === true || 
-        b.doi_tac === 'Viện KH An Toàn' || 
-        (b.nguoi_dat && String(b.nguoi_dat).trim() !== '')
-      );
+      if (b.is_internal === true || b.doi_tac === 'Viện KH An Toàn') return true;
+      if (Array.isArray(b.danh_sach_doan) && b.danh_sach_doan.some(g => g.is_internal === true || g.doi_tac === 'Viện KH An Toàn')) return true;
+      return Boolean(b.nguoi_dat && String(b.nguoi_dat).trim() !== '' && b.doi_tac === 'Viện KH An Toàn');
     }
 
     // ================= 2. QUẢN LÝ TÀI KHOẢN NGƯỜI DÙNG =================
@@ -543,16 +768,21 @@
 
     function getCurrentUser() {
       const stored = localStorage.getItem('app_user_profile');
-      return stored ? JSON.parse(stored) : { name: "Chưa rõ", phone: "" };
+      return stored ? JSON.parse(stored) : { name: "Điều hành", phone: "" };
     }
 
     // ================= 3. THUẬT TOÁN ÂM LỊCH VIỆT NAM (HỒ NGỌC ĐỨC) =================
-    function jdFromDate(d, m, y) {
-      const a = Math.floor((14 - m) / 12);
-      const y2 = y + 4800 - a;
-      const m2 = m + 12 * a - 3;
-      return d + Math.floor((153 * m2 + 2) / 5) + 365 * y2 + Math.floor(y2 / 4) - Math.floor(y2 / 100) + Math.floor(y2 / 400) - 32045;
+    function jdFromDate(dd, mm, yy) {
+      const a = Math.floor((14 - mm) / 12);
+      const y = yy + 4800 - a;
+      const m = mm + 12 * a - 3;
+      let jd = dd + Math.floor((153 * m + 2) / 5) + 365 * y + Math.floor(y / 4) - Math.floor(y / 100) + Math.floor(y / 400) - 32045;
+      if (jd < 2299161) {
+        jd = dd + Math.floor((153 * m + 2) / 5) + 365 * y + Math.floor(y / 4) - 32083;
+      }
+      return jd;
     }
+
     function getNewMoonDay(k, timeZone) {
       const T = k / 1236.85;
       const T2 = T * T;
@@ -570,29 +800,80 @@
       C1 -= 0.0074 * Math.sin((M - Mpr) * dr) + 0.0004 * Math.sin((2 * F + M) * dr);
       return Math.floor(Jd1 + C1 + 0.5 + timeZone / 24);
     }
+
     function getSunLongitude(jdn, timeZone) {
       const T = (jdn - 2451545.5 - timeZone / 24) / 36525;
       const dr = Math.PI / 180;
       const L0 = 280.46646 + 36000.76983 * T + 0.0003032 * T * T;
       const M = 357.52911 + 35999.05029 * T - 0.0001537 * T * T;
       const C = (1.914602 - 0.004817 * T - 0.000014 * T * T) * Math.sin(M * dr) + (0.019993 - 0.000101 * T) * Math.sin(2 * M * dr);
-      let theta = L0 + C;
-      theta = theta - 360 * Math.floor(theta / 360);
-      return Math.floor(theta / 30);
+      const theta = (L0 + C) * dr;
+      const lambda = theta - 2 * Math.PI * Math.floor(theta / (2 * Math.PI));
+      return Math.floor(lambda / (Math.PI / 6));
     }
+
+    function getLunarMonth11(yy, timeZone) {
+      const off = jdFromDate(31, 12, yy) - 2415021.076998695;
+      const k = Math.floor(off / 29.530588853);
+      let nm = getNewMoonDay(k, timeZone);
+      const sunLong = getSunLongitude(nm, timeZone);
+      if (sunLong >= 9) {
+        nm = getNewMoonDay(k - 1, timeZone);
+      }
+      return nm;
+    }
+
+    function getLeapMonthOffset(a11, timeZone) {
+      const k = Math.floor((a11 - 2415021.076998695) / 29.530588853 + 0.5);
+      let last = 0;
+      let i = 1;
+      let arc = getSunLongitude(getNewMoonDay(k + i, timeZone), timeZone);
+      do {
+        last = arc;
+        i++;
+        arc = getSunLongitude(getNewMoonDay(k + i, timeZone), timeZone);
+      } while (arc !== last && i < 14);
+      return i - 1;
+    }
+
     function convertSolar2Lunar(dd, mm, yy) {
       const timeZone = 7;
       const dayNumber = jdFromDate(dd, mm, yy);
-      const k = Math.floor((dayNumber - 2415021.0769986) / 29.530588853);
+      const k = Math.floor((dayNumber - 2415021.076998695) / 29.530588853);
       let monthStart = getNewMoonDay(k + 1, timeZone);
-      if (monthStart > dayNumber) monthStart = getNewMoonDay(k, timeZone);
-      let a11 = getNewMoonDay(Math.floor((jdFromDate(31, 12, yy) - 2415021.0769986) / 29.530588853), timeZone);
-      if (getSunLongitude(a11, timeZone) >= 9) a11 = getNewMoonDay(Math.floor((jdFromDate(31, 12, yy) - 2415021.0769986) / 29.530588853) - 1, timeZone);
+      if (monthStart > dayNumber) {
+        monthStart = getNewMoonDay(k, timeZone);
+      }
+      let a11 = getLunarMonth11(yy, timeZone);
+      let b11 = a11;
+      let lunarYear;
+      if (a11 >= monthStart) {
+        lunarYear = yy;
+        a11 = getLunarMonth11(yy - 1, timeZone);
+      } else {
+        lunarYear = yy + 1;
+        b11 = getLunarMonth11(yy + 1, timeZone);
+      }
       const lunarDay = dayNumber - monthStart + 1;
       const diff = Math.floor((monthStart - a11) / 29);
-      let lunarMonth = diff >= 0 ? diff + 11 : diff + 23;
-      if (lunarMonth > 12) lunarMonth -= 12;
-      return { day: lunarDay, month: lunarMonth };
+      let lunarLeap = 0;
+      let lunarMonth = diff + 11;
+      if (b11 - a11 > 365) {
+        const leapMonthDiff = getLeapMonthOffset(a11, timeZone);
+        if (diff >= leapMonthDiff) {
+          lunarMonth = diff + 10;
+          if (diff === leapMonthDiff) {
+            lunarLeap = 1;
+          }
+        }
+      }
+      if (lunarMonth > 12) {
+        lunarMonth = lunarMonth - 12;
+      }
+      if (lunarMonth >= 11 && diff < 4) {
+        lunarYear -= 1;
+      }
+      return { day: lunarDay, month: lunarMonth, year: lunarYear, leap: lunarLeap };
     }
 
     // ================= 4. THÔNG BÁO TOAST =================
@@ -626,36 +907,27 @@
       }, 2600);
     }
 
-    // ================= 5. TẢI DỮ LIỆU & RENDER =================
+    // ================= 5. TẢI DỮ LIỆU ĐỒNG BỘ 100% ONLINE TỪ GOOGLE SHEETS =================
     async function fetchData() {
-      const localSaved = localStorage.getItem('app_saved_bookings');
-      let localBookings = localSaved ? JSON.parse(localSaved) : [];
+      try {
+        const url = `${APPS_SCRIPT_URL}?t=${Date.now()}`;
+        const res = await fetch(url);
+        const data = await res.json();
 
-      if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL.includes("AKfycbx...")) {
-        destinations = [
-          { id: "DD01", ten: "Phù Đổng Green Park", dia_chi: "Gia Lâm, Hà Nội", anh_url: "https://images.unsplash.com/photo-1511527661048-7fe73d85e9a4?w=1000", suc_chua: 2000 },
-          { id: "DD02", ten: "Terasol Farm Life", dia_chi: "Sóc Sơn, Hà Nội", anh_url: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=1000", suc_chua: 700 }
-        ];
-        bookings = [];
-      } else {
-        try {
-          const res = await fetch(APPS_SCRIPT_URL);
-          const data = await res.json();
-          destinations = data.destinations || [];
-          bookings = data.bookings || [];
-        } catch (e) {
-          console.error("Lỗi tải dữ liệu:", e);
-        }
+        destinations = data.destinations || [];
+        bookings = (data.bookings || []).map(b => {
+          b.date = normalizeDateStr(b.date);
+          return b;
+        });
+        editHistoryLogs = (data.history || []).map(h => {
+          h.date = normalizeDateStr(h.date);
+          return h;
+        });
+
+      } catch (e) {
+        console.error("Lỗi kết nối Google Sheets:", e);
+        thongBao("Không thể đồng bộ dữ liệu từ Google Sheets: " + e.message, "error");
       }
-
-      localBookings.forEach(lb => {
-        const idx = bookings.findIndex(b => b.destination_id === lb.destination_id && b.date === lb.date);
-        if (idx >= 0) {
-          bookings[idx] = Object.assign(bookings[idx], lb);
-        } else {
-          bookings.push(lb);
-        }
-      });
 
       if (destinations.length > 0 && !selectedDestId) {
         selectedDestId = destinations[0].id;
@@ -667,15 +939,84 @@
 
     function renderDestSelect() {
       const select = document.getElementById('dest-select');
-      select.innerHTML = '';
+      const menu = document.getElementById('dest-dropdown-menu');
+      const label = document.getElementById('dest-dropdown-label');
+
+      if (select) select.innerHTML = '';
+      if (menu) menu.innerHTML = '';
+
       destinations.forEach(d => {
-        const opt = document.createElement('option');
-        opt.value = d.id;
-        opt.innerText = d.ten;
-        if (d.id === selectedDestId) opt.selected = true;
-        select.appendChild(opt);
+        // Native select sync (cho các tính năng phụ)
+        if (select) {
+          const opt = document.createElement('option');
+          opt.value = d.id;
+          opt.innerText = d.ten;
+          if (d.id === selectedDestId) opt.selected = true;
+          select.appendChild(opt);
+        }
+
+        // Custom dropdown item (Ảnh 1: hiển thị tên kèm số lượng tối đa)
+        if (menu) {
+          const isSelected = (d.id === selectedDestId);
+          const item = document.createElement('div');
+          item.className = `px-3 py-2 flex items-center justify-between cursor-pointer transition ${isSelected ? 'bg-blue-600 text-white font-extrabold' : 'hover:bg-blue-50 text-slate-800 font-bold'}`;
+          item.innerHTML = `
+            <span class="truncate text-xs ${isSelected ? 'text-white' : 'text-slate-800'}">${d.ten}</span>
+            <span class="text-[10px] font-extrabold ml-2 flex-shrink-0 px-2 py-0.5 rounded ${isSelected ? 'bg-blue-500 text-white border border-blue-400' : 'bg-blue-100 text-blue-800 border border-blue-200'}">
+              Tối đa: ${(d.suc_chua || 0).toLocaleString()} hs
+            </span>
+          `;
+          item.onclick = (e) => {
+            e.stopPropagation();
+            onSelectCustomDest(d.id);
+          };
+          menu.appendChild(item);
+        }
       });
+
+      const currentDest = destinations.find(d => d.id === selectedDestId) || destinations[0];
+      if (currentDest && label) {
+        // Khi chọn xong: hiển thị chuẩn như Ảnh 2 (chỉ tên địa điểm)
+        label.innerText = currentDest.ten;
+      }
       updateDestPreview();
+    }
+
+    function toggleDestDropdown(e) {
+      if (e) e.stopPropagation();
+      const menu = document.getElementById('dest-dropdown-menu');
+      const chevron = document.getElementById('dest-dropdown-chevron');
+      if (!menu) return;
+      const isClosed = menu.classList.contains('hidden');
+      if (isClosed) {
+        menu.classList.remove('hidden');
+        if (chevron) chevron.classList.add('rotate-180');
+      } else {
+        menu.classList.add('hidden');
+        if (chevron) chevron.classList.remove('rotate-180');
+      }
+    }
+
+    function closeDestDropdown() {
+      const menu = document.getElementById('dest-dropdown-menu');
+      const chevron = document.getElementById('dest-dropdown-chevron');
+      if (menu) menu.classList.add('hidden');
+      if (chevron) chevron.classList.remove('rotate-180');
+    }
+
+    function onSelectCustomDest(id) {
+      selectedDestId = id;
+      closeDestDropdown();
+      const dest = destinations.find(d => d.id === id);
+      if (dest) {
+        const label = document.getElementById('dest-dropdown-label');
+        if (label) label.innerText = dest.ten;
+      }
+      const select = document.getElementById('dest-select');
+      if (select) select.value = id;
+      renderDestSelect();
+      updateDestPreview();
+      renderCalendar();
     }
 
     function onSelectDestination(id) {
@@ -690,10 +1031,9 @@
       document.getElementById('dest-name').innerText = dest.ten;
       document.getElementById('txt-address').innerText = dest.dia_chi;
       document.getElementById('dest-image').src = dest.anh_url || "https://images.unsplash.com/photo-1511527661048-7fe73d85e9a4?w=1000";
-      document.getElementById('badge-capacity').innerText = `Tối đa: ${dest.suc_chua.toLocaleString()} hs`;
+      document.getElementById('badge-capacity').innerText = `Tối đa: ${(dest.suc_chua || 0).toLocaleString()} hs`;
     }
 
-    // Render lưới lịch tháng (Màu xanh da trời đậm nếu là công ty mình chốt)
     function renderCalendar() {
       document.getElementById('txt-month-display').innerText = `THÁNG ${currentMonth} / ${currentYear}`;
       const grid = document.getElementById('calendar-grid');
@@ -731,18 +1071,13 @@
         let bgStyle = "bg-white border-emerald-300 text-slate-800 shadow-xs";
         let statusTag = '<span class="text-[8px] font-bold text-emerald-600 bg-emerald-50 px-1 rounded">Trống</span>';
 
-        // 1. CÔNG TY MÌNH CHỐT: HIỂN THỊ MÀU XANH DA TRỜI ĐẬM
         if (isMine) {
           bgStyle = "bg-sky-100 border-sky-500 text-sky-950 shadow-sm ring-1 ring-sky-400";
-          statusTag = `<span class="text-[8px] font-black text-sky-900 bg-sky-200 px-1 rounded">${qty > 0 ? qty.toLocaleString() + ' hs' : 'Cty mình'}</span>`;
-        } 
-        // 2. CÔNG TY KHÁC ĐÔNG KHÁCH (MÀU ĐỎ)
-        else if (status === 'DONG') {
+          statusTag = `<span class="text-[8px] font-black text-sky-900 bg-sky-200 px-1 rounded">${qty > 0 ? qty.toLocaleString() + ' hs' : 'Safe Edu'}</span>`;
+        } else if (status === 'DONG' || qty >= 500) {
           bgStyle = "bg-rose-50 border-rose-400 text-rose-950 ring-1 ring-rose-300";
           statusTag = `<span class="text-[8px] font-black text-rose-700 bg-rose-100 px-1 rounded">${qty > 0 ? qty.toLocaleString() + ' hs' : 'Đông khách'}</span>`;
-        } 
-        // 3. CÔNG TY KHÁC ÍT KHÁCH (MÀU VÀNG/CAM)
-        else if (status === 'NHO') {
+        } else if (status === 'NHO' || qty > 0) {
           bgStyle = "bg-amber-50 border-amber-300 text-amber-950";
           statusTag = `<span class="text-[8px] font-bold text-amber-700 bg-amber-100 px-1 rounded">${qty > 0 ? qty.toLocaleString() + ' hs' : 'Ít khách'}</span>`;
         }
@@ -778,291 +1113,481 @@
       }
     }
 
+    // Hỗ trợ cảm ứng vuốt màn hình chuyển tháng trên điện thoại
     let touchStartX = 0;
+    let touchEndX = 0;
     const calWrapper = document.getElementById('calendar-wrapper');
-    calWrapper.addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].screenX; }, { passive: true });
+    calWrapper.addEventListener('touchstart', e => {
+      touchStartX = e.changedTouches[0].screenX;
+    }, { passive: true });
     calWrapper.addEventListener('touchend', e => {
-      const touchEndX = e.changedTouches[0].screenX;
-      if (touchStartX - touchEndX > 50) nextMonth();
-      if (touchEndX - touchStartX > 50) prevMonth();
+      touchEndX = e.changedTouches[0].screenX;
+      handleSwipe();
     }, { passive: true });
 
-    // ================= 6. TRA CỨU ĐIỂM ĐẾN THEO 1 NGÀY CHỐT =================
-    function openAvailableDestModal() {
-      const modal = document.getElementById('available-dest-modal');
-      const input = document.getElementById('single-day-input');
-      
-      // Nếu đang xem hoặc vừa bấm vào 1 ngày trên lịch thì điền sẵn ngày đó
-      if (activeDayData && activeDayData.day) {
-        input.value = `${activeDayData.day}/${activeDayData.month}/${activeDayData.year}`;
-      } else {
-        input.value = '';
+    function handleSwipe() {
+      const diff = touchEndX - touchStartX;
+      if (Math.abs(diff) > 50) {
+        if (diff > 0) prevMonth(); // Vuốt sang phải -> Tháng trước
+        else nextMonth(); // Vuốt sang trái -> Tháng sau
       }
-
-      modal.classList.remove('hidden');
-      onSearchSingleDay();
-      setTimeout(() => input.focus(), 100);
     }
 
-    function closeAvailableDestModal() {
-      document.getElementById('available-dest-modal').classList.add('hidden');
-    }
+    // ================= 6. CẬP NHẬT THỦ CÔNG & TOÀN BỘ KÍN LỊCH =================
+    function openManualCalendarModal() {
+      manualDestId = selectedDestId || (destinations[0] ? destinations[0].id : null);
+      manualYear = currentYear;
+      manualMonth = currentMonth;
+      manualChanges = {};
 
-    function clearSingleDayInput() {
-      const input = document.getElementById('single-day-input');
-      input.value = '';
-      document.getElementById('btn-clear-single-day').classList.add('hidden');
-      onSearchSingleDay();
-      input.focus();
-    }
-
-    // Tự động phân tích chuỗi người dùng gõ thành ngày hợp lệ
-    function parseSingleDayInput(rawStr) {
-      const s = String(rawStr || '').trim();
-      if (!s) return null;
-
-      // 1. Gõ đủ ngày tháng năm: 20/11/2026 hoặc 20-11-2026
-      const mFull = s.match(/^(\d{1,2})[/-](\d{1,2})[/-](\d{4})$/);
-      if (mFull) {
-        const d = Number(mFull[1]);
-        const m = Number(mFull[2]);
-        const y = Number(mFull[3]);
-        if (d >= 1 && d <= 31 && m >= 1 && m <= 12) {
-          return { dateStr: `${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`, day: d, month: m, year: y };
-        }
-      }
-
-      // 2. Gõ ngày tháng: 20/11 (lấy năm hiện tại)
-      const mDM = s.match(/^(\d{1,2})[/-](\d{1,2})$/);
-      if (mDM) {
-        const d = Number(mDM[1]);
-        const m = Number(mDM[2]);
-        if (d >= 1 && d <= 31 && m >= 1 && m <= 12) {
-          return { dateStr: `${currentYear}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`, day: d, month: m, year: currentYear };
-        }
-      }
-
-      // 3. Chỉ gõ số ngày: 20 hoặc "ngày 20" (lấy tháng và năm đang hiển thị trên màn hình)
-      const mDay = s.match(/(?:ngày\s+)?(\d{1,2})$/i);
-      if (mDay) {
-        const d = Number(mDay[1]);
-        const daysInMonth = new Date(currentYear, currentMonth, 0).getDate();
-        if (d >= 1 && d <= daysInMonth) {
-          return { dateStr: `${currentYear}-${String(currentMonth).padStart(2, '0')}-${String(d).padStart(2, '0')}`, day: d, month: currentMonth, year: currentYear };
-        }
-      }
-
-      return null;
-    }
-
-    // Hàm tìm kiếm và hiển thị danh sách các điểm cho đúng 1 ngày
-    function onSearchSingleDay() {
-      const input = document.getElementById('single-day-input');
-      const clearBtn = document.getElementById('btn-clear-single-day');
-      const container = document.getElementById('single-day-results');
-      const rawVal = input.value.trim();
-
-      if (rawVal) {
-        clearBtn.classList.remove('hidden');
-      } else {
-        clearBtn.classList.add('hidden');
-      }
-
-      // Chưa nhập ngày
-      if (!rawVal) {
-        container.innerHTML = `
-          <div class="text-center py-10 text-slate-400 space-y-2">
-            <div class="text-3xl">📅</div>
-            <div class="text-xs font-bold text-slate-600">Nhập ngày nhà trường muốn đi vào ô trên</div>
-            <p class="text-[11px] text-slate-400 max-w-xs mx-auto">
-              Chỉ cần gõ <strong>20</strong> hoặc <strong>20/11</strong>, hệ thống sẽ lọc ngay các điểm còn trống hoặc ít khách (&lt;500 hs) vào đúng ngày đó.
-            </p>
-          </div>
-        `;
-        return;
-      }
-
-      const target = parseSingleDayInput(rawVal);
-
-      // Ngày không hợp lệ
-      if (!target) {
-        container.innerHTML = `
-          <div class="text-center py-10 text-slate-400 space-y-1">
-            <div class="text-3xl">⚠️</div>
-            <div class="text-xs font-bold text-amber-700">Ngày nhập chưa đúng định dạng!</div>
-            <p class="text-[11px] text-slate-500">Vui lòng gõ số ngày hợp lệ (Ví dụ: <strong>15</strong>, <strong>20/11</strong> hoặc <strong>20/11/2026</strong>).</p>
-          </div>
-        `;
-        return;
-      }
-
-      const { dateStr, day, month, year } = target;
-      const weekdays = ["Chủ Nhật", "Thứ Hai", "Thứ Ba", "Thứ Tư", "Thứ Năm", "Thứ Sáu", "Thứ Bảy"];
-      const dateObj = new Date(year, month - 1, day);
-      const dayOfWeekStr = weekdays[dateObj.getDay()];
-      const lunar = convertSolar2Lunar(day, month, year);
-
-      // Lọc các điểm đến CÒN TRỐNG hoặc ÍT KHÁCH (< 500 HS) vào đúng ngày này
-      const availableDests = [];
-
-      destinations.forEach(dest => {
-        const b = bookings.find(item => item.destination_id === dest.id && item.date === dateStr);
-        const qty = b ? (Number(b.so_luong) || 0) : 0;
-        const phanLoai = b ? b.phan_loai : 'TRONG';
-        const isMine = isOurCompanyBooking(b);
-
-        // NẾU ĐÔNG KHÁCH (>= 500 HS) HOẶC CÔNG TY MÌNH ĐÃ CHỐT -> LOẠI BỎ KHỎI DANH SÁCH
-        if (phanLoai === 'DONG' || qty >= 500 || isMine) {
-          return;
-        }
-
-        // 1. Trường hợp TRỐNG HOÀN TOÀN
-        if (!b || phanLoai === 'TRONG' || qty === 0) {
-          availableDests.push({
-            dest: dest,
-            status: 'TRONG',
-            qty: 0,
-            html: `
-              <div onclick="selectDestFromAvail('${dest.id}', ${day}, ${month}, ${year})" class="cursor-pointer p-3 rounded-xl bg-white border-2 border-emerald-300 hover:border-emerald-500 hover:bg-emerald-50/40 shadow-xs flex items-center justify-between gap-2.5 transition active:scale-98">
-                <div class="flex items-center gap-2.5 truncate">
-                  <div class="w-3 h-3 rounded-full bg-emerald-500 flex-shrink-0"></div>
-                  <div class="truncate">
-                    <div class="text-xs font-black text-slate-900 truncate">${dest.ten}</div>
-                    <div class="text-[10px] text-slate-500 truncate">📍 ${dest.dia_chi}</div>
-                  </div>
-                </div>
-                <div class="text-right flex-shrink-0">
-                  <span class="inline-block text-[10px] font-black text-emerald-800 bg-emerald-100 border border-emerald-300 px-2 py-0.5 rounded-md">Trống hoàn toàn</span>
-                  <div class="text-[10px] text-emerald-700 font-bold mt-0.5">Tối đa: ${dest.suc_chua.toLocaleString()} hs</div>
-                </div>
-              </div>
-            `
-          });
-        }
-        // 2. Trường hợp ÍT KHÁCH (< 500 HS)
-        else if (qty < 500) {
-          const remaining = Math.max(0, dest.suc_chua - qty);
-          availableDests.push({
-            dest: dest,
-            status: 'NHO',
-            qty: qty,
-            html: `
-              <div onclick="selectDestFromAvail('${dest.id}', ${day}, ${month}, ${year})" class="cursor-pointer p-3 rounded-xl bg-white border-2 border-amber-300 hover:border-amber-500 hover:bg-amber-50/40 shadow-xs flex items-center justify-between gap-2.5 transition active:scale-98">
-                <div class="flex items-center gap-2.5 truncate">
-                  <div class="w-3 h-3 rounded-full bg-amber-500 flex-shrink-0"></div>
-                  <div class="truncate">
-                    <div class="text-xs font-black text-slate-900 truncate">${dest.ten}</div>
-                    <div class="text-[10px] text-slate-500 truncate">📍 ${dest.dia_chi}</div>
-                  </div>
-                </div>
-                <div class="text-right flex-shrink-0">
-                  <span class="inline-block text-[10px] font-black text-amber-800 bg-amber-100 border border-amber-300 px-2 py-0.5 rounded-md">Có ${qty.toLocaleString()} hs</span>
-                  <div class="text-[10px] text-amber-700 font-bold mt-0.5">Còn nhận: ~${remaining.toLocaleString()} hs</div>
-                </div>
-              </div>
-            `
-          });
-        }
+      const sel = document.getElementById('manual-dest-select');
+      sel.innerHTML = '';
+      destinations.forEach(d => {
+        const opt = document.createElement('option');
+        opt.value = d.id;
+        opt.innerText = `${d.ten} (Sức chứa: ${(d.suc_chua || 0).toLocaleString()} hs)`;
+        if (d.id === manualDestId) opt.selected = true;
+        sel.appendChild(opt);
       });
 
-      // Tiêu đề ngày được chọn
-      const headerDateHtml = `
-        <div class="p-3 rounded-xl bg-blue-50 border border-blue-200 flex items-center justify-between shadow-2xs mb-2">
-          <div class="flex items-center gap-2.5">
-            <div class="w-10 h-10 rounded-xl bg-blue-600 text-white flex flex-col items-center justify-center font-black leading-none shadow-xs">
-              <span class="text-sm">${day}</span>
-              <span class="text-[9px] text-blue-200 mt-0.5">T${month}</span>
-            </div>
-            <div>
-              <div class="text-xs font-black text-slate-900">${dayOfWeekStr}, ngày ${day}/${month}/${year}</div>
-              <div class="text-[10px] text-amber-600 font-bold">Âm lịch: Ngày ${lunar.day} tháng ${lunar.month}</div>
-            </div>
-          </div>
-          <span class="text-[10px] font-extrabold text-blue-800 bg-blue-100 px-2.5 py-1 rounded-lg border border-blue-200">
-            ${availableDests.length} điểm khả dụng
-          </span>
+      renderManualCalendar();
+      document.getElementById('manual-calendar-modal').classList.remove('hidden');
+    }
+
+    function closeManualCalendarModal() {
+      document.getElementById('manual-calendar-modal').classList.add('hidden');
+    }
+
+    function onManualChangeDestination(newDestId) {
+      manualDestId = newDestId;
+      manualChanges = {};
+      renderManualCalendar();
+    }
+
+    function manualPrevMonth() {
+      manualMonth--;
+      if (manualMonth < 1) { manualMonth = 12; manualYear--; }
+      renderManualCalendar();
+    }
+
+    function manualNextMonth() {
+      manualMonth++;
+      if (manualMonth > 12) { manualMonth = 1; manualYear++; }
+      renderManualCalendar();
+    }
+
+    function manualSetAllMonthDong() {
+      const daysInMonth = new Date(manualYear, manualMonth, 0).getDate();
+      for (let day = 1; day <= daysInMonth; day++) {
+        const dStr = `${manualYear}-${String(manualMonth).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        manualChanges[dStr] = 'DONG';
+      }
+      renderManualCalendar();
+      thongBao(`Đã chuyển toàn bộ ngày trong Tháng ${manualMonth} sang KÍN LỊCH!`, "warning");
+    }
+
+    function renderManualCalendar() {
+      document.getElementById('manual-month-display').innerText = `THÁNG ${manualMonth} / ${manualYear}`;
+      const grid = document.getElementById('manual-calendar-grid');
+      grid.innerHTML = '';
+
+      const firstDay = new Date(manualYear, manualMonth - 1, 1).getDay();
+      const startCol = (firstDay === 0) ? 6 : firstDay - 1;
+      const daysInMonth = new Date(manualYear, manualMonth, 0).getDate();
+
+      for (let i = 0; i < startCol; i++) {
+        const blank = document.createElement('div');
+        blank.className = 'rounded-md bg-slate-200/40 border border-transparent';
+        grid.appendChild(blank);
+      }
+
+      for (let day = 1; day <= daysInMonth; day++) {
+        const dStr = `${manualYear}-${String(manualMonth).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        const lunar = convertSolar2Lunar(day, manualMonth, manualYear);
+
+        const b = bookings.find(item => item.destination_id === manualDestId && item.date === dStr);
+        const isMineOriginal = isOurCompanyBooking(b);
+
+        let currentStatus = 'TRONG';
+        if (manualChanges[dStr] !== undefined) {
+          currentStatus = manualChanges[dStr];
+        } else if (b && b.phan_loai && b.phan_loai !== 'TRONG') {
+          currentStatus = b.phan_loai;
+        }
+
+        const cell = document.createElement('div');
+        cell.id = `manual-cell-${day}`;
+        applyManualCellStyle(cell, currentStatus, day, lunar, isMineOriginal && (manualChanges[dStr] === undefined));
+
+        cell.onclick = () => handleManualDayClick(day, dStr, lunar, b);
+        grid.appendChild(cell);
+      }
+
+      updateManualChangeCount();
+    }
+
+    function applyManualCellStyle(cellEl, status, day, lunar, isMineBadge = false) {
+      let bgStyle = "bg-white border-emerald-300 text-slate-800 shadow-xs";
+      let statusTag = '<span class="text-[8px] font-bold text-emerald-600 bg-emerald-50 px-1 rounded">Trống</span>';
+
+      if (isMineBadge) {
+        bgStyle = "bg-sky-100 border-sky-500 text-sky-950 ring-2 ring-sky-400 shadow-xs";
+        statusTag = '<span class="text-[8px] font-black text-sky-900 bg-sky-200 px-1 rounded">Safe Edu</span>';
+      } else if (status === 'DONG') {
+        bgStyle = "bg-rose-50 border-rose-400 text-rose-950 ring-2 ring-rose-400 shadow-xs";
+        statusTag = '<span class="text-[8px] font-black text-rose-700 bg-rose-100 px-1 rounded">Đông khách</span>';
+      } else if (status === 'NHO') {
+        bgStyle = "bg-amber-50 border-amber-400 text-amber-950 ring-2 ring-amber-400 shadow-xs";
+        statusTag = '<span class="text-[8px] font-bold text-amber-700 bg-amber-100 px-1 rounded">Ít khách</span>';
+      }
+
+      cellEl.className = `flex flex-col justify-between p-1 rounded-lg border cursor-pointer hover:scale-[1.02] active:scale-95 transition-all overflow-hidden select-none ${bgStyle}`;
+      cellEl.innerHTML = `
+        <div class="flex justify-between items-start leading-none pointer-events-none">
+          <span class="text-[11px] font-black text-slate-900">${day}</span>
+          <span class="text-[8px] font-semibold text-slate-400">${lunar.day === 1 || lunar.day === 15 ? `${lunar.day}/${lunar.month}` : lunar.day}</span>
         </div>
+        <div class="text-right leading-none pointer-events-none">${statusTag}</div>
+      `;
+    }
+
+    function handleManualDayClick(day, dStr, lunar, originalBooking) {
+      const isMine = isOurCompanyBooking(originalBooking);
+
+      if (isMine && manualChanges[dStr] === undefined) {
+        pendingBlueEditTarget = { day, dStr, lunar, originalBooking };
+        document.getElementById('warning-blue-edit-modal').classList.remove('hidden');
+        return;
+      }
+
+      cycleManualStatus(day, dStr, lunar);
+    }
+
+    function confirmBlueEdit() {
+      document.getElementById('warning-blue-edit-modal').classList.add('hidden');
+      if (pendingBlueEditTarget) {
+        const { day, dStr, lunar } = pendingBlueEditTarget;
+        // Bỏ đặt lịch công ty mình sẽ chuyển trực tiếp về trạng thái Còn trống (TRONG)
+        manualChanges[dStr] = 'TRONG';
+        const cell = document.getElementById(`manual-cell-${day}`);
+        if (cell) {
+          applyManualCellStyle(cell, 'TRONG', day, lunar, false);
+        }
+        updateManualChangeCount();
+        pendingBlueEditTarget = null;
+      }
+    }
+
+    function rejectBlueEdit() {
+      document.getElementById('warning-blue-edit-modal').classList.add('hidden');
+      pendingBlueEditTarget = null;
+    }
+
+    function cycleManualStatus(day, dStr, lunar) {
+      let current = 'TRONG';
+      if (manualChanges[dStr] !== undefined) {
+        current = manualChanges[dStr];
+      } else {
+        const b = bookings.find(item => item.destination_id === manualDestId && item.date === dStr);
+        if (b && b.phan_loai && b.phan_loai !== 'TRONG') current = b.phan_loai;
+      }
+
+      let nextStatus = 'TRONG';
+      if (current === 'TRONG') nextStatus = 'NHO';
+      else if (current === 'NHO') nextStatus = 'DONG';
+      else if (current === 'DONG') nextStatus = 'TRONG';
+
+      manualChanges[dStr] = nextStatus;
+
+      const cell = document.getElementById(`manual-cell-${day}`);
+      if (cell) {
+        applyManualCellStyle(cell, nextStatus, day, lunar, false);
+      }
+      updateManualChangeCount();
+    }
+
+    function updateManualChangeCount() {
+      const keys = Object.keys(manualChanges);
+      const badge = document.getElementById('manual-change-count');
+      if (keys.length === 0) {
+        badge.innerText = "Chưa có thay đổi nào";
+        badge.className = "text-[11px] font-bold text-slate-400";
+      } else {
+        badge.innerText = `Đã chọn chỉnh sửa: ${keys.length} ngày`;
+        badge.className = "text-[11px] font-extrabold text-amber-700";
+      }
+    }
+
+    function promptSaveManualChanges() {
+      const changedDates = Object.keys(manualChanges);
+      if (changedDates.length === 0) {
+        thongBao("Bạn chưa thay đổi ngày nào trên bảng lịch!", "warning");
+        return;
+      }
+
+      const dest = destinations.find(d => d.id === manualDestId);
+      const destName = dest ? dest.ten : "Điểm đến";
+
+      const listHtml = changedDates.sort().map(dStr => {
+        const parts = dStr.split('-');
+        const dateDisplay = `${parts[2]}/${parts[1]}/${parts[0]}`;
+        const st = manualChanges[dStr];
+        let stText = '<span class="text-emerald-700 font-bold">Còn trống</span>';
+        if (st === 'NHO') stText = '<span class="text-amber-700 font-bold">Ít khách</span>';
+        else if (st === 'DONG') stText = '<span class="text-rose-700 font-bold">Kín lịch</span>';
+
+        return `<div class="flex justify-between items-center py-0.5 border-b border-slate-100 text-[11px]">
+          <span>📅 Ngày <strong>${dateDisplay}</strong>:</span>
+          <span>Chuyển sang ➔ ${stText}</span>
+        </div>`;
+      }).join('');
+
+      document.getElementById('manual-confirm-prompt-text').innerHTML = `
+        <div class="mb-2 font-bold text-slate-800">
+          Bạn có chắc chắn muốn lưu cập nhật trạng thái lịch cho điểm đến <strong class="text-blue-700">${destName}</strong>?
+        </div>
+        <div class="space-y-1">${listHtml}</div>
+        <p class="text-[10px] text-slate-500 mt-2 italic">Lưu ý: Dữ liệu này sẽ lập tức đồng bộ lên Google Sheets và ghi vết vào bảng lịch sử.</p>
       `;
 
-      if (availableDests.length === 0) {
-        container.innerHTML = headerDateHtml + `
-          <div class="text-center py-8 text-slate-400 space-y-2 bg-white rounded-xl border border-slate-200 p-4">
-            <div class="text-3xl">🚫</div>
-            <div class="text-xs font-bold text-rose-600">Không có điểm nào còn trống hoặc ít khách vào ngày này!</div>
-            <p class="text-[11px] text-slate-500 max-w-xs mx-auto">
-              Tất cả các điểm đến vào ngày <strong>${day}/${month}/${year}</strong> đều đã đông khách (&ge;500 hs), kín lịch hoặc công ty mình đã chốt.
-            </p>
+      document.getElementById('manual-confirm-modal').classList.remove('hidden');
+    }
+
+    function closeManualConfirmModal() {
+      document.getElementById('manual-confirm-modal').classList.add('hidden');
+    }
+
+    async function executeSaveManualChanges() {
+      closeManualConfirmModal();
+      const changedDates = Object.keys(manualChanges);
+      if (changedDates.length === 0) return;
+
+      const dest = destinations.find(d => d.id === manualDestId);
+      const destName = dest ? dest.ten : "Điểm đến";
+      const capacity = dest ? dest.suc_chua : 700;
+      const currentUser = getCurrentUser();
+      const nowStr = new Date().toLocaleString('vi-VN');
+
+      const historyLogsToAdd = [];
+
+      const recordsToUpsert = changedDates.map(dStr => {
+        const st = manualChanges[dStr];
+        let qty = 0;
+        let tenDoan = "";
+
+        if (st === 'NHO') {
+          qty = 250;
+          tenDoan = "Ít khách (Cập nhật thủ công)";
+        } else if (st === 'DONG') {
+          qty = capacity;
+          tenDoan = "Đã kín lịch (Cập nhật thủ công)";
+        }
+
+        const oldBooking = bookings.find(b => b.destination_id === manualDestId && b.date === dStr);
+        const wasOurCompany = isOurCompanyBooking(oldBooking);
+
+        let schoolCombined = "";
+        let oldBookerName = "";
+        let oldBookerPhone = "";
+        let oldBookingDate = "";
+
+        if (oldBooking) {
+          if (wasOurCompany) {
+            schoolCombined = oldBooking.ten_doan || "Lịch Viện An Toàn";
+            oldBookerName = oldBooking.nguoi_dat || "Không rõ";
+            oldBookerPhone = oldBooking.sdt_dat || "";
+            oldBookingDate = oldBooking.date || "";
+          } else {
+            schoolCombined = oldBooking.ten_doan || "Đoàn khách ngoài";
+          }
+        }
+
+        historyLogsToAdd.push({
+          id: 'LOG_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
+          dest_name: destName,
+          date: dStr,
+          new_status: st,
+          editor_name: currentUser.name,
+          editor_phone: currentUser.phone,
+          edit_time: nowStr,
+          is_our_company: wasOurCompany,
+          old_school_info: schoolCombined,
+          old_booker_name: oldBookerName,
+          old_booker_phone: oldBookerPhone,
+          old_booking_date: oldBookingDate
+        });
+
+        return {
+          destination_id: manualDestId,
+          date: dStr,
+          phan_loai: st,
+          so_luong: qty,
+          ten_doan: tenDoan,
+          is_internal: false,
+          doi_tac: "",
+          nguoi_dat: "",
+          sdt_dat: ""
+        };
+      });
+
+      thongBao("Đang lưu trực tuyến lên Google Sheets...", "warning");
+
+      try {
+        const res = await fetch(APPS_SCRIPT_URL, {
+          method: 'POST',
+          mode: 'cors',
+          redirect: 'follow',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({
+            action: 'batch_upsert_bookings',
+            destination_id: manualDestId,
+            records: recordsToUpsert,
+            history_logs: historyLogsToAdd
+          })
+        });
+        const resJson = await res.json();
+        if (resJson.status === 'success') {
+          thongBao(`Đã lưu thành công ${recordsToUpsert.length} ngày lên Google Sheets!`, "success");
+        } else {
+          thongBao("Lỗi từ máy chủ: " + (resJson.message || "Không xác định"), "error");
+        }
+      } catch (e) {
+        console.error(e);
+        thongBao("Lỗi gửi dữ liệu lên Google Sheets: " + e.message, "error");
+      }
+
+      closeManualCalendarModal();
+      manualChanges = {};
+      await fetchData();
+    }
+
+    // ================= 7. MODAL BẢNG LỊCH SỬ CHỈNH SỬA (ONLINE TỪ GOOGLE SHEET) =================
+    function openHistoryModal() {
+      document.getElementById('history-search-input').value = '';
+      renderHistoryList();
+      document.getElementById('history-modal').classList.remove('hidden');
+    }
+
+    function closeHistoryModal() {
+      document.getElementById('history-modal').classList.add('hidden');
+    }
+
+    function renderHistoryList() {
+      const container = document.getElementById('history-container');
+      const keyword = document.getElementById('history-search-input').value.toLowerCase().trim();
+      let logs = [...editHistoryLogs];
+
+      if (keyword) {
+        logs = logs.filter(l => 
+          (l.dest_name || '').toLowerCase().includes(keyword) ||
+          (l.date || '').toLowerCase().includes(keyword) ||
+          (l.editor_name || '').toLowerCase().includes(keyword) ||
+          (l.editor_phone || '').toLowerCase().includes(keyword) ||
+          (l.old_school_info || '').toLowerCase().includes(keyword)
+        );
+      }
+
+      if (logs.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-10 text-slate-400">
+            <div class="text-3xl mb-1">📜</div>
+            <div class="text-xs font-semibold">Chưa có bản ghi nhật ký kiểm toán nào trên Google Sheet.</div>
           </div>
         `;
         return;
       }
 
-      container.innerHTML = headerDateHtml + `
-        <div class="space-y-2">
-          ${availableDests.map(x => x.html).join('')}
-        </div>
-      `;
+      container.innerHTML = logs.map(item => {
+        let dateFormatted = item.date;
+        if (item.date && item.date.includes('-')) {
+          const p = item.date.split('-');
+          dateFormatted = `${p[2]}/${p[1]}/${p[0]}`;
+        }
+
+        let stBadge = '<span class="text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded font-bold">Còn trống</span>';
+        if (item.new_status === 'NHO') stBadge = '<span class="text-amber-700 bg-amber-100 px-2 py-0.5 rounded font-bold">Ít khách</span>';
+        else if (item.new_status === 'DONG') stBadge = '<span class="text-rose-700 bg-rose-100 px-2 py-0.5 rounded font-bold">Kín lịch</span>';
+
+        return `
+          <div class="p-3 bg-white rounded-xl border border-slate-200 shadow-xs space-y-2">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-1.5">
+              <span class="font-extrabold text-blue-900 flex items-center gap-1">
+                <span>📍 ${item.dest_name}</span> - <span>📅 Ngày: ${dateFormatted}</span>
+              </span>
+              <span>${stBadge}</span>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[11px] text-slate-600">
+              <div>
+                👤 <strong>Tài khoản sửa:</strong> <span class="text-slate-900 font-bold">${item.editor_name}</span>
+              </div>
+              <div>
+                📞 <strong>SĐT người sửa:</strong> <span class="text-slate-900 font-bold">${item.editor_phone || 'Chưa cập nhật'}</span>
+              </div>
+              <div class="sm:col-span-2 text-[10px] text-slate-400">
+                ⏰ <strong>Thời gian thực hiện sửa:</strong> ${item.edit_time}
+              </div>
+            </div>
+
+            ${item.is_our_company ? `
+              <div class="p-2 rounded-lg bg-sky-50 border border-sky-200 text-[11px] space-y-1 text-sky-950 mt-1">
+                <div class="font-extrabold text-sky-800 flex items-center gap-1">
+                  <span>🏛️ Thông tin đoàn Viện An Toàn trước khi sửa:</span>
+                </div>
+                <div>• <strong>Trường & Phân hiệu:</strong> <span class="font-bold text-slate-900">${item.old_school_info || 'Không rõ'}</span></div>
+                <div class="flex justify-between">
+                  <span>• <strong>Người chốt trước đó:</strong> ${item.old_booker_name || '-'}</span>
+                  <span>• <strong>SĐT:</strong> ${item.old_booker_phone || '-'}</span>
+                </div>
+                <div>• <strong>Ngày xác nhận chốt trước đó:</strong> ${item.old_booking_date || '-'}</div>
+              </div>
+            ` : ''}
+          </div>
+        `;
+      }).join('');
     }
 
-    function selectDestFromAvail(destId, day, month, year) {
-      selectedDestId = destId;
-      currentMonth = month;
-      currentYear = year;
-      document.getElementById('dest-select').value = destId;
-      updateDestPreview();
-      renderCalendar();
-      closeAvailableDestModal();
-      thongBao("Đã chuyển tới lịch của điểm được chọn!", "success");
+    async function clearHistoryLog() {
+      if (!confirm("Bạn có chắc chắn muốn xóa toàn bộ lịch sử chỉnh sửa trên Google Sheet?")) return;
+      thongBao("Đang xóa lịch sử trên Google Sheet...", "warning");
+      try {
+        const res = await fetch(APPS_SCRIPT_URL, {
+          method: 'POST',
+          mode: 'cors',
+          redirect: 'follow',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({ action: 'clear_history' })
+        });
+        const resJson = await res.json();
+        if (resJson.status === 'success') {
+          editHistoryLogs = [];
+          renderHistoryList();
+          thongBao("Đã xóa sạch lịch sử chỉnh sửa trên Google Sheet!", "success");
+        } else {
+          thongBao("Lỗi khi xóa lịch sử: " + (resJson.message || "Không xác định"), "error");
+        }
+      } catch (err) {
+        thongBao("Lỗi kết nối: " + err.message, "error");
+      }
     }
 
-    // ================= 7. QUẢN LÝ MODAL CHI TIẾT NGÀY & ĐẶT LỊCH =================
+    // ================= 8. CHI TIẾT NGÀY & ĐẶT LỊCH ĐA ĐOÀN =================
     function filterTravelCompanyNames(rawName) {
       if (!rawName) return "Đoàn học sinh";
-
-      const travelKeywords = [
-        'dl', 'travel', 'tour', 'tourium', 'group', 'lữ hành', 'công ty', 'cty', 'skytour', 'opentour',
-        'việt trung', 'tre việt', 'đất việt', 'hương anh', 'đại việt', 'hạnh phúc', 'thế giới',
-        'nguyễn kim', 'quang anh', 'suntour', 'văn hoá việt', 'bản việt', 'phú bình', 'hà thành',
-        'everest', 'phương việt', 'thăng long', 'hưng phát', 'hoàng long', 'tân á', 'quảng việt',
-        'chị hoa', 'chị quế', 'a lân', 'a huệ', 'minh trung', 'minh trí', 'khánh linh', 'thủ đô',
-        'chính ban', 'phúc lâm', 'việt á', 'vin travel', 'vintravel', 'bắc giang', 'bắc trung nam',
-        'vũ tuyển', 'vũ quảng', 'bình minh', 'trải nghiệm việt', 'cánh diều vàng', 'bông cốm xanh',
-        'đông dương', 'quốc tế hn'
-      ];
-
-      const schoolKeywords = ['thpt', 'thcs', 'tiểu học', 'trường', 'mầm non', 'đại học', 'học viện', 'c1', 'c2', 'c3'];
-
+      const travelKeywords = ['dl', 'travel', 'tour', 'group', 'lữ hành', 'công ty', 'cty'];
       const parts = String(rawName).split(/[,;+]/);
       const result = [];
-
       parts.forEach(p => {
         const item = p.trim();
         if (!item) return;
         const lower = item.toLowerCase();
-
-        if (lower.includes('đám cưới') || lower.includes('tiệc')) {
-          result.push("Tiệc / Sự kiện riêng");
-          return;
-        }
-
-        const isTravel = travelKeywords.some(k => lower.includes(k));
-        const isSchool = schoolKeywords.some(k => lower.includes(k));
-
-        if (isSchool && !isTravel) {
-          result.push(item);
-        } else if (isTravel) {
-          if (lower.includes('tiểu học') || lower.includes('c1')) result.push("Đoàn học sinh Tiểu học");
-          else if (lower.includes('thcs') || lower.includes('c2')) result.push("Đoàn học sinh THCS");
-          else if (lower.includes('thpt') || lower.includes('c3')) result.push("Đoàn học sinh THPT");
-          else if (lower.includes('mầm non') || lower.includes('mn')) result.push("Đoàn mầm non");
-          else if (lower.includes('sinh viên') || lower.includes('sv')) result.push("Đoàn sinh viên");
+        if (travelKeywords.some(k => lower.includes(k))) {
+          result.push("Đoàn học sinh");
         } else {
           result.push(item);
         }
       });
-
-      const uniqueResult = [...new Set(result)];
-      return uniqueResult.length > 0 ? uniqueResult.join(', ') : "Đoàn học sinh";
+      return [...new Set(result)].join(', ') || "Đoàn học sinh";
     }
 
     function openDayModal(d, m, y, lunar, booking) {
@@ -1080,54 +1605,158 @@
       };
 
       document.getElementById('modal-date-solar').innerText = `Dương lịch: Ngày ${d}/${m}/${y}`;
-      document.getElementById('modal-date-lunar').innerText = `Âm lịch: Ngày ${lunar.day} tháng ${lunar.month}`;
+      document.getElementById('modal-date-lunar').innerText = `Âm lịch: Ngày ${lunar.day} tháng ${lunar.month}${lunar.leap ? ' (nhuận)' : ''}`;
       document.getElementById('modal-dest-name').innerText = dest ? dest.ten : '';
 
       const modalCard = document.getElementById('day-modal-card');
       const badge = document.getElementById('modal-status-badge');
-      const doanName = document.getElementById('modal-doan-name');
-      const partnerRow = document.getElementById('modal-partner-row');
-      const doanQty = document.getElementById('modal-doan-qty');
+      const container = document.getElementById('modal-groups-container');
+      const countBadge = document.getElementById('modal-group-count');
+      const totalQtyEl = document.getElementById('modal-total-qty');
 
       const isMine = isOurCompanyBooking(booking);
+      const status = booking ? booking.phan_loai : 'TRONG';
+      const totalQty = booking ? (Number(booking.so_luong) || 0) : 0;
 
-      if (booking && booking.phan_loai !== 'TRONG') {
-        if (isMine) {
-          // VIỀN MÀU XANH DA TRỜI KHI LÀ CÔNG TY MÌNH
-          modalCard.className = "bg-white border-2 border-sky-500 rounded-2xl w-full max-w-sm p-4 shadow-2xl ring-2 ring-sky-300 transition-all duration-200";
-          badge.innerText = 'Công ty mình đã chốt';
-          badge.className = 'bg-sky-100 text-sky-800 border border-sky-300 font-bold px-2 py-0.5 rounded text-[11px]';
-          
-          // Hiển thị tên trường + phân hiệu
-          if (booking.phan_hieu) {
-            doanName.innerHTML = `${booking.ten_truong || booking.ten_doan}<br><span class="text-[10px] text-slate-500 font-semibold">(Phân hiệu: ${booking.phan_hieu})</span>`;
-          } else {
-            doanName.innerText = booking.ten_doan || 'Đoàn công ty mình';
-          }
+      totalQtyEl.innerText = `${totalQty.toLocaleString()} hs`;
 
-          // HIỂN THỊ DÒNG ĐỐI TÁC: VIỆN KH AN TOÀN
-          partnerRow.classList.remove('hidden');
-        } else {
-          // CÔNG TY KHÁC: VIỀN XÁM BÌNH THƯỜNG, ẨN DÒNG ĐỐI TÁC
-          modalCard.className = "bg-white border border-slate-200 rounded-2xl w-full max-w-sm p-4 shadow-2xl transition-all duration-200";
-          badge.innerText = booking.phan_loai === 'DONG' ? 'Đông khách (≥ 500)' : 'Ít khách (< 500)';
-          badge.className = booking.phan_loai === 'DONG' ? 'bg-rose-100 text-rose-700' : 'bg-amber-100 text-amber-700';
-          doanName.innerText = filterTravelCompanyNames(booking.ten_doan);
-          partnerRow.classList.add('hidden');
-        }
-
-        doanQty.innerText = `${(booking.so_luong || 0).toLocaleString()} học sinh`;
+      if (isMine) {
+        modalCard.className = "bg-white border-2 border-sky-500 rounded-2xl w-full max-w-sm max-h-[90vh] flex flex-col p-4 shadow-2xl ring-2 ring-sky-300 transition-all duration-200 overflow-hidden";
+        badge.innerText = 'Viện KH An Toàn đã chốt lịch';
+        badge.className = 'bg-sky-100 text-sky-800 border border-sky-300 font-bold px-2 py-0.5 rounded text-[11px]';
+      } else if (status === 'DONG' || totalQty >= 500) {
+        modalCard.className = "bg-white border border-rose-300 rounded-2xl w-full max-w-sm max-h-[90vh] flex flex-col p-4 shadow-2xl transition-all duration-200 overflow-hidden";
+        badge.innerText = 'Đông khách / Kín lịch (≥ 500 hs)';
+        badge.className = 'bg-rose-100 text-rose-700 font-bold px-2 py-0.5 rounded text-[11px]';
+      } else if (status === 'NHO' || totalQty > 0) {
+        modalCard.className = "bg-white border border-amber-300 rounded-2xl w-full max-w-sm max-h-[90vh] flex flex-col p-4 shadow-2xl transition-all duration-200 overflow-hidden";
+        badge.innerText = 'Ít khách (< 500 hs)';
+        badge.className = 'bg-amber-100 text-amber-700 font-bold px-2 py-0.5 rounded text-[11px]';
       } else {
-        modalCard.className = "bg-white border border-slate-200 rounded-2xl w-full max-w-sm p-4 shadow-2xl transition-all duration-200";
+        modalCard.className = "bg-white border border-slate-200 rounded-2xl w-full max-w-sm max-h-[90vh] flex flex-col p-4 shadow-2xl transition-all duration-200 overflow-hidden";
         badge.innerText = 'Còn trống';
-        badge.className = 'bg-emerald-100 text-emerald-700';
-        doanName.innerText = 'Chưa có đoàn';
-        partnerRow.classList.add('hidden');
-        doanQty.innerText = '0 học sinh';
+        badge.className = 'bg-emerald-100 text-emerald-700 font-bold px-2 py-0.5 rounded text-[11px]';
       }
+
+      // Xử lý danh sách đoàn (Đa đoàn - không mất đoàn cũ)
+      let groups = [];
+      if (booking && Array.isArray(booking.danh_sach_doan) && booking.danh_sach_doan.length > 0) {
+        groups = [...booking.danh_sach_doan];
+      } else if (booking && (booking.ten_doan || totalQty > 0)) {
+        groups = [{
+          ten_doan: booking.ten_doan,
+          so_luong: totalQty,
+          nguoi_dat: booking.nguoi_dat,
+          sdt_dat: booking.sdt_dat,
+          dia_chi_xa: booking.dia_chi_xa,
+          doi_tac: booking.doi_tac,
+          is_internal: isMine
+        }];
+      }
+
+      // Luôn sắp xếp ô công ty mình (VAT) lên trên đầu
+      groups.sort((a, b) => {
+        const aMine = Boolean(a.is_internal === true || a.doi_tac === 'Viện KH An Toàn');
+        const bMine = Boolean(b.is_internal === true || b.doi_tac === 'Viện KH An Toàn');
+        if (aMine && !bMine) return -1;
+        if (!aMine && bMine) return 1;
+        return 0;
+      });
+
+      countBadge.innerText = groups.length > 0 ? `${groups.length} đoàn` : '0 đoàn';
+
+      if (groups.length === 0) {
+        container.innerHTML = `
+          <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 text-center text-slate-400 italic">
+            Chưa có đoàn nào đăng ký cho ngày này.
+          </div>
+        `;
+      } else {
+        container.innerHTML = groups.map((g, idx) => {
+          const isGroupInternal = Boolean(g.is_internal === true || g.doi_tac === 'Viện KH An Toàn');
+          const gQty = Number(g.so_luong) || 0;
+
+          if (isGroupInternal) {
+            return `
+              <div class="p-2.5 rounded-xl bg-sky-50 border border-sky-300 space-y-1.5 shadow-xs">
+                <div class="flex items-center justify-between">
+                  <span class="text-[9px] font-black uppercase text-sky-800 bg-sky-200 px-1.5 py-0.5 rounded">
+                    Đoàn ${idx + 1} • Safe Edu
+                  </span>
+                  <span class="text-xs font-black text-sky-700">${gQty.toLocaleString()} hs</span>
+                </div>
+                <div class="text-xs font-bold text-slate-900 leading-snug">
+                  🏫 ${g.ten_doan || g.ten_truong || 'Chưa rõ tên trường'}
+                </div>
+                <div class="text-[10px] text-slate-600 flex justify-between">
+                  <span>📍 Xã: <strong>${g.dia_chi_xa || 'Chưa ghi'}</strong></span>
+                  <span>🤝 Đối tác: <strong class="text-sky-900">Viện KH An Toàn</strong></span>
+                </div>
+                <div class="flex items-center justify-between border-t border-sky-200 pt-1 text-[10px] text-slate-600">
+                  <span>👤 Người chốt: <strong>${g.nguoi_dat || 'Chưa ghi'}</strong></span>
+                  ${g.sdt_dat ? `<a href="tel:${g.sdt_dat}" class="text-blue-700 font-bold hover:underline">📞 ${g.sdt_dat}</a>` : ''}
+                </div>
+              </div>
+            `;
+          } else {
+            // Thông tin đoàn ngoài bôi màu nền vàng nhạt
+            return `
+              <div class="p-2.5 rounded-xl bg-amber-50/90 border border-amber-300/80 space-y-1 shadow-xs">
+                <div class="flex items-center justify-between">
+                  <span class="text-[9px] font-extrabold uppercase text-amber-800 bg-amber-200/80 px-1.5 py-0.5 rounded">
+                    Đoàn ${idx + 1} • Khách ngoài
+                  </span>
+                  <span class="text-xs font-black text-amber-800">${gQty.toLocaleString()} hs</span>
+                </div>
+                <div class="text-xs font-bold text-slate-800 leading-snug">
+                  🏫 ${filterTravelCompanyNames(g.ten_doan || g.ten_truong)}
+                </div>
+                ${g.dia_chi_xa ? `<div class="text-[10px] text-slate-600">📍 Xã: <strong>${g.dia_chi_xa}</strong></div>` : ''}
+              </div>
+            `;
+          }
+        }).join('');
+      }
+
       document.getElementById('day-modal').classList.remove('hidden');
     }
-    function closeDayModal() { document.getElementById('day-modal').classList.add('hidden'); }
+
+    function closeDayModal() {
+      document.getElementById('day-modal').classList.add('hidden');
+    }
+
+    function handleUserClickBooking() {
+      if (!activeDayData) return;
+      const b = activeDayData.booking;
+      const status = b ? b.phan_loai : 'TRONG';
+      const qty = b ? (Number(b.so_luong) || 0) : 0;
+
+      if (status === 'DONG' || qty >= 500) {
+        document.getElementById('alert-red-booking-modal').classList.remove('hidden');
+        return;
+      }
+
+      if (status === 'NHO' || (qty > 0 && qty < 500)) {
+        document.getElementById('yellow-alert-prompt-text').innerHTML = `
+          Lưu ý: Địa điểm đang có đoàn <strong class="text-amber-700 font-extrabold">${qty.toLocaleString()}</strong> khách đã đăng ký trước. Bạn có muốn tiếp tục đăng ký thêm đoàn vào ngày này không?
+        `;
+        document.getElementById('confirm-yellow-booking-modal').classList.remove('hidden');
+        return;
+      }
+
+      openBookingFormModal();
+    }
+
+    function closeRedAlertModal() {
+      document.getElementById('alert-red-booking-modal').classList.add('hidden');
+    }
+
+    function closeYellowAlertModal(accepted) {
+      document.getElementById('confirm-yellow-booking-modal').classList.add('hidden');
+      if (accepted) {
+        openBookingFormModal();
+      }
+    }
 
     function openBookingFormModal() {
       if (!activeDayData) return;
@@ -1143,15 +1772,15 @@
 
       document.getElementById('booking-form-modal').classList.remove('hidden');
     }
-    function closeBookingFormModal() { document.getElementById('booking-form-modal').classList.add('hidden'); }
+
+    function closeBookingFormModal() {
+      document.getElementById('booking-form-modal').classList.add('hidden');
+    }
 
     function toggleBranchInput(val) {
       const box = document.getElementById('box-branch-name');
-      if (val === 'Phân hiệu') {
-        box.classList.remove('hidden');
-      } else {
-        box.classList.add('hidden');
-      }
+      if (val === 'Phân hiệu') box.classList.remove('hidden');
+      else box.classList.add('hidden');
     }
 
     let pendingBookingPayload = null;
@@ -1213,104 +1842,92 @@
       closeBookingFormModal();
       document.getElementById('confirm-modal').classList.remove('hidden');
     }
-    function closeConfirmModal() { document.getElementById('confirm-modal').classList.add('hidden'); }
+
+    function closeConfirmModal() {
+      document.getElementById('confirm-modal').classList.add('hidden');
+    }
 
     async function executeFinalBooking() {
       if (!pendingBookingPayload) return;
       closeConfirmModal();
 
       const p = pendingBookingPayload;
-      const phanLoai = p.qty >= 500 ? 'DONG' : 'NHO';
-
-      // ĐÁNH DẤU RÕ RÀNG ĐOÀN CỦA CÔNG TY MÌNH KÈM ĐỐI TÁC VIỆN KH AN TOÀN
-      const bookingRecord = {
-        id: 'BK_' + Date.now(),
-        destination_id: p.destination_id,
-        destination_name: p.destination_name,
-        date: p.date,
+      const groupData = {
+        id: 'GRP_' + Date.now(),
         ten_doan: p.fullSchoolInfo,
         ten_truong: p.schoolName,
         phan_hieu: p.branchName,
-        doi_tac: "Viện KH An Toàn",
-        is_internal: true,
         dia_chi_xa: p.commune,
         so_luong: p.qty,
-        phan_loai: phanLoai,
+        doi_tac: "Viện KH An Toàn",
+        is_internal: true,
         nguoi_dat: p.user_name,
-        sdt_dat: p.user_phone
+        sdt_dat: p.user_phone,
+        created_at: new Date().toLocaleDateString('vi-VN')
       };
 
-      const localSaved = localStorage.getItem('app_saved_bookings');
-      let localBookings = localSaved ? JSON.parse(localSaved) : [];
-      const existingIdx = localBookings.findIndex(x => x.destination_id === bookingRecord.destination_id && x.date === bookingRecord.date);
-      if (existingIdx >= 0) {
-        localBookings[existingIdx] = bookingRecord;
-      } else {
-        localBookings.push(bookingRecord);
-      }
-      localStorage.setItem('app_saved_bookings', JSON.stringify(localBookings));
+      thongBao("Đang ghi nhận lịch lên Google Sheets...", "warning");
 
       try {
-        fetch(APPS_SCRIPT_URL, {
+        const res = await fetch(APPS_SCRIPT_URL, {
           method: 'POST',
           mode: 'cors',
           redirect: 'follow',
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify({
             action: 'save_booking',
-            payload: bookingRecord
+            payload: {
+              destination_id: p.destination_id,
+              date: p.date,
+              new_group: groupData
+            }
           })
-        }).catch(err => console.log("Gửi nền backend:", err));
+        });
+        const resJson = await res.json();
+        if (resJson.status === 'success') {
+          await fetchData();
+          document.getElementById('success-modal').classList.remove('hidden');
+        } else {
+          thongBao("Lỗi ghi nhận lịch: " + (resJson.message || "Không xác định"), "error");
+        }
       } catch (e) {
         console.error(e);
+        thongBao("Lỗi kết nối Google Sheets: " + e.message, "error");
       }
-
-      await fetchData();
-      document.getElementById('success-modal').classList.remove('hidden');
     }
-    function closeSuccessModal() { document.getElementById('success-modal').classList.add('hidden'); }
 
-    // ================= 8. QUẢN LÝ MODAL DANH SÁCH LỊCH (CHỈ HIỆN CỦA CÔNG TY MÌNH) =================
+    function closeSuccessModal() {
+      document.getElementById('success-modal').classList.add('hidden');
+    }
+
+    // ================= 9. DANH SÁCH LỊCH ĐÃ CHỐT (CÔNG TY MÌNH) =================
     function openBookingListModal() {
       document.getElementById('list-search-input').value = '';
       renderBookingList();
       document.getElementById('booking-list-modal').classList.remove('hidden');
     }
-    function closeBookingListModal() { document.getElementById('booking-list-modal').classList.add('hidden'); }
+
+    function closeBookingListModal() {
+      document.getElementById('booking-list-modal').classList.add('hidden');
+    }
 
     function toggleHidePastBookings() {
       hidePastBookings = !hidePastBookings;
-      const eyeIcon = document.getElementById('eye-icon');
       const eyeText = document.getElementById('eye-text');
       const btn = document.getElementById('btn-toggle-eye');
 
       if (hidePastBookings) {
-        eyeIcon.innerHTML = `
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"></path>
-            <path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"></path>
-            <path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"></path>
-            <line x1="2" y1="2" x2="22" y2="22"></line>
-          </svg>
-        `;
         eyeText.innerText = "Đang ẩn ngày cũ";
         btn.className = "px-2.5 py-1.5 rounded-lg border text-xs font-bold flex items-center gap-1 bg-amber-50 border-amber-200 text-amber-700 hover:bg-amber-100 transition flex-shrink-0";
         thongBao("Đã ẩn các chương trình trước ngày hôm nay", "warning");
       } else {
-        eyeIcon.innerHTML = `
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path>
-            <circle cx="12" cy="12" r="3"></circle>
-          </svg>
-        `;
         eyeText.innerText = "Hiện tất cả";
         btn.className = "px-2.5 py-1.5 rounded-lg border text-xs font-bold flex items-center gap-1 bg-blue-50 border-blue-200 text-blue-700 hover:bg-blue-100 transition flex-shrink-0";
-        thongBao("Đang hiển thị toàn bộ lịch (kể cả ngày đã qua)", "success");
+        thongBao("Đang hiển thị toàn bộ lịch", "success");
       }
       renderBookingList();
     }
 
-    // CHỈ HIỆN CÁC TRƯỜNG DO CÔNG TY MÌNH CHỐT
     function renderBookingList() {
       const container = document.getElementById('booking-cards-container');
       const keyword = document.getElementById('list-search-input').value.toLowerCase().trim();
@@ -1319,11 +1936,8 @@
       const now = new Date();
       const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
 
-      // LỌC CHẶT CHẼ: CHỈ LẤY ĐOÀN CỦA CÔNG TY MÌNH
-      let list = bookings.filter(b => {
-        const isMine = isOurCompanyBooking(b);
-        return isMine && b.phan_loai && b.phan_loai !== 'TRONG';
-      });
+      // Lọc các bản ghi nội bộ (VAT / Viện KH An Toàn)
+      let list = bookings.filter(b => isOurCompanyBooking(b) && b.phan_loai && b.phan_loai !== 'TRONG');
 
       list.sort((a, b) => (a.date > b.date ? 1 : -1));
 
@@ -1354,7 +1968,7 @@
 
       list.forEach(item => {
         const dest = destinations.find(d => d.id === item.destination_id);
-        const destName = dest ? dest.ten : (item.destination_name || 'Chưa rõ điểm đến');
+        const destName = dest ? dest.ten : 'Chưa rõ điểm đến';
         const phone = item.sdt_dat || '';
         const person = item.nguoi_dat || 'Chưa cập nhật';
         const commune = item.dia_chi_xa || 'Chưa ghi xã';
@@ -1362,7 +1976,7 @@
         let dateFormatted = item.date;
         if (item.date && item.date.includes('-')) {
           const parts = item.date.split('-');
-          if (parts.length === 3) dateFormatted = `${parts[2]}/${parts[1]}/${parts[0]}`;
+          dateFormatted = `${parts[2]}/${parts[1]}/${parts[0]}`;
         }
 
         const card = document.createElement('div');
@@ -1373,17 +1987,12 @@
               <span>📅</span> <span>${dateFormatted}</span>
             </span>
             <span class="text-[9px] font-bold px-2 py-0.5 rounded-full border bg-sky-100 text-sky-800 border-sky-300">
-              Công ty mình
+              Viện KH An Toàn (Safe Edu)
             </span>
           </div>
 
           <div class="text-xs font-bold text-slate-900 leading-tight">
             🏫 ${item.ten_doan || 'Chưa rõ tên trường'}
-          </div>
-
-          <div class="text-[11px] font-bold text-sky-700 flex items-center gap-1">
-            <span>🤝 Đối tác:</span>
-            <span>Viện KH An Toàn</span>
           </div>
 
           <div class="text-[11px] text-slate-600 flex flex-wrap gap-x-2 gap-y-0.5">
@@ -1401,16 +2010,343 @@
               <a href="tel:${phone}" class="flex-shrink-0 flex items-center gap-1 bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] font-bold px-2.5 py-1 rounded-lg transition active:scale-95 shadow-xs">
                 <span>📞</span> <span>Gọi ngay</span>
               </a>
-            ` : `
-              <span class="text-[10px] text-slate-400 italic">Không có SĐT</span>
-            `}
+            ` : ''}
           </div>
         `;
         container.appendChild(card);
       });
     }
 
-    // ================= 9. QUẢN LÝ MODAL QUẢN TRỊ (CÓ TÌM KIẾM ĐIỂM ĐẾN) =================
+    // ================= 10. NHẬP FILE EXCEL (.XLSX, .XLS) =================
+    async function submitAiFileImport() {
+      let destId = document.getElementById('import-dest-select').value;
+      if (!destId) destId = selectedDestId;
+
+      const fileInput = document.getElementById('excel-file-input');
+      if (fileInput.files.length === 0) {
+        thongBao("Vui lòng chọn 1 file Excel (.xlsx hoặc .xls)!", "warning");
+        return;
+      }
+
+      const btn = document.getElementById('btn-run-ai');
+      btn.innerText = "⏳ Đang phân tích file Excel...";
+      btn.disabled = true;
+
+      try {
+        const file = fileInput.files[0];
+        const data = await file.arrayBuffer();
+        const workbook = XLSX.read(data, { cellDates: false });
+        const recordsMap = {};
+
+        workbook.SheetNames.forEach(sheetName => {
+          if (sheetName.includes('2026') || sheetName.includes('2027') || sheetName.includes('Tháng') || sheetName.includes('T')) {
+            const sheet = workbook.Sheets[sheetName];
+            const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+            let currentDate = null;
+
+            rows.forEach(row => {
+              if (!row || row.length === 0) return;
+              const colA = String(row[0] || '').trim().toUpperCase();
+              if (colA.includes('TỔNG') || colA.includes('TOTAL')) return;
+
+              const cellDateVal = row[1];
+              let parsedDate = null;
+
+              if (typeof cellDateVal === 'number' && cellDateVal > 40000 && cellDateVal < 60000) {
+                const utcDays = Math.floor(cellDateVal - 25569);
+                const dateObj = new Date(utcDays * 86400 * 1000);
+                const y = dateObj.getUTCFullYear();
+                const m = String(dateObj.getUTCMonth() + 1).padStart(2, '0');
+                const d = String(dateObj.getUTCDate()).padStart(2, '0');
+                parsedDate = `${y}-${m}-${d}`;
+              } else if (typeof cellDateVal === 'string') {
+                const mYMD = cellDateVal.match(/(\d{4})[-/](\d{1,2})[-/](\d{1,2})/);
+                const mDMY = cellDateVal.match(/(\d{1,2})[-/](\d{1,2})[-/](\d{4})/);
+                if (mYMD) parsedDate = `${mYMD[1]}-${mYMD[2].padStart(2, '0')}-${mYMD[3].padStart(2, '0')}`;
+                else if (mDMY) parsedDate = `${mDMY[3]}-${mDMY[2].padStart(2, '0')}-${mDMY[1].padStart(2, '0')}`;
+              }
+
+              if (parsedDate) currentDate = parsedDate;
+
+              if (currentDate && (currentDate.startsWith('2026') || currentDate.startsWith('2027'))) {
+                const rawTeam = String(row[2] || '').trim();
+                const rawQty = Number(String(row[3] || '').replace(/[^0-9]/g, '')) || 0;
+                const rawTotalDay = Number(String(row[4] || '').replace(/[^0-9]/g, '')) || 0;
+
+                if (rawTeam === 'Tên đoàn' || rawTeam === 'Đơn vị du lịch') return;
+
+                const cleanName = filterTravelCompanyNames(rawTeam);
+                const rowQty = rawTotalDay > 0 ? rawTotalDay : rawQty;
+
+                if (rawTeam || rowQty > 0) {
+                  if (!recordsMap[currentDate]) {
+                    recordsMap[currentDate] = { teams: [], maxQty: 0 };
+                  }
+                  if (cleanName && !recordsMap[currentDate].teams.includes(cleanName)) {
+                    recordsMap[currentDate].teams.push(cleanName);
+                  }
+                  if (rowQty > recordsMap[currentDate].maxQty) {
+                    recordsMap[currentDate].maxQty = rowQty;
+                  }
+                }
+              }
+            });
+          }
+        });
+
+        const extractedExcel = Object.keys(recordsMap).map(dateStr => {
+          const item = recordsMap[dateStr];
+          const qty = item.maxQty;
+          return {
+            date: dateStr,
+            ten_doan: item.teams.join(', ') || 'Đoàn học sinh',
+            so_luong: qty,
+            phan_loai: qty >= 500 ? 'DONG' : (qty > 0 ? 'NHO' : 'TRONG'),
+            is_internal: false
+          };
+        });
+
+        if (extractedExcel.length === 0) {
+          thongBao("Không tìm thấy dữ liệu đoàn hợp lệ trong file Excel!", "warning");
+          return;
+        }
+
+        thongBao(`Đang đồng bộ ${extractedExcel.length} ngày lên Google Sheets...`, "warning");
+
+        const resExcel = await fetch(APPS_SCRIPT_URL, {
+          method: 'POST',
+          mode: 'cors',
+          redirect: 'follow',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({
+            action: 'batch_upsert_bookings',
+            destination_id: destId,
+            records: extractedExcel
+          })
+        });
+
+        const resJsonExcel = await resExcel.json();
+        const count = resJsonExcel.count || extractedExcel.length;
+
+        fileInput.value = '';
+        await fetchData();
+        closeAdminModal();
+        thongBao(`Đã nạp và đồng bộ thành công ${count} ngày lịch lên Google Sheets!`, "success");
+
+      } catch (err) {
+        thongBao("Lỗi đọc file: " + err.message, "error");
+      } finally {
+        btn.innerText = "✨ Phân Tích File & Cập Nhật Lịch Tự Động";
+        btn.disabled = false;
+      }
+    }
+
+    // ================= 11. TRA CỨU ĐIỂM ĐẾN KHẢ DỤNG THEO NGÀY =================
+    function openAvailableDestModal() {
+      const modal = document.getElementById('available-dest-modal');
+      const input = document.getElementById('single-day-input');
+      
+      if (activeDayData && activeDayData.day) {
+        input.value = `${activeDayData.day}/${activeDayData.month}/${activeDayData.year}`;
+      } else {
+        input.value = '';
+      }
+
+      modal.classList.remove('hidden');
+      onSearchSingleDay();
+      setTimeout(() => input.focus(), 100);
+    }
+
+    function closeAvailableDestModal() {
+      document.getElementById('available-dest-modal').classList.add('hidden');
+    }
+
+    function clearSingleDayInput() {
+      const input = document.getElementById('single-day-input');
+      input.value = '';
+      document.getElementById('btn-clear-single-day').classList.add('hidden');
+      onSearchSingleDay();
+      input.focus();
+    }
+
+    function parseSingleDayInput(rawStr) {
+      const s = String(rawStr || '').trim();
+      if (!s) return null;
+
+      const mFull = s.match(/^(\d{1,2})[/-](\d{1,2})[/-](\d{4})$/);
+      if (mFull) {
+        const d = Number(mFull[1]);
+        const m = Number(mFull[2]);
+        const y = Number(mFull[3]);
+        if (d >= 1 && d <= 31 && m >= 1 && m <= 12) {
+          return { dateStr: `${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`, day: d, month: m, year: y };
+        }
+      }
+
+      const mDM = s.match(/^(\d{1,2})[/-](\d{1,2})$/);
+      if (mDM) {
+        const d = Number(mDM[1]);
+        const m = Number(mDM[2]);
+        if (d >= 1 && d <= 31 && m >= 1 && m <= 12) {
+          return { dateStr: `${currentYear}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`, day: d, month: m, year: currentYear };
+        }
+      }
+
+      const mDay = s.match(/(?:ngày\s+)?(\d{1,2})$/i);
+      if (mDay) {
+        const d = Number(mDay[1]);
+        const daysInMonth = new Date(currentYear, currentMonth, 0).getDate();
+        if (d >= 1 && d <= daysInMonth) {
+          return { dateStr: `${currentYear}-${String(currentMonth).padStart(2, '0')}-${String(d).padStart(2, '0')}`, day: d, month: currentMonth, year: currentYear };
+        }
+      }
+
+      return null;
+    }
+
+    function onSearchSingleDay() {
+      const input = document.getElementById('single-day-input');
+      const clearBtn = document.getElementById('btn-clear-single-day');
+      const container = document.getElementById('single-day-results');
+      const rawVal = input.value.trim();
+
+      if (rawVal) clearBtn.classList.remove('hidden');
+      else clearBtn.classList.add('hidden');
+
+      if (!rawVal) {
+        container.innerHTML = `
+          <div class="text-center py-10 text-slate-400 space-y-2">
+            <div class="text-3xl">📅</div>
+            <div class="text-xs font-bold text-slate-600">Nhập ngày nhà trường muốn đi vào ô trên</div>
+            <div class="text-[10px] text-slate-400">Hiện danh sách các điểm đến trống và mới có ít khách</div>
+          </div>
+        `;
+        return;
+      }
+
+      const target = parseSingleDayInput(rawVal);
+      if (!target) {
+        container.innerHTML = `
+          <div class="text-center py-10 text-slate-400 space-y-1">
+            <div class="text-3xl">⚠️</div>
+            <div class="text-xs font-bold text-amber-700">Ngày nhập chưa đúng định dạng!</div>
+            <div class="text-[10px] text-slate-400">Vui lòng gõ số ngày (VD: 20) hoặc ngày/tháng (20/11)</div>
+          </div>
+        `;
+        return;
+      }
+
+      const { dateStr, day, month, year } = target;
+      const weekdays = ["Chủ Nhật", "Thứ Hai", "Thứ Ba", "Thứ Tư", "Thứ Năm", "Thứ Sáu", "Thứ Bảy"];
+      const dateObj = new Date(year, month - 1, day);
+      const dayOfWeekStr = weekdays[dateObj.getDay()];
+      const lunar = convertSolar2Lunar(day, month, year);
+
+      const availableDests = [];
+
+      destinations.forEach(dest => {
+        const b = bookings.find(item => item.destination_id === dest.id && item.date === dateStr);
+        const qty = b ? (Number(b.so_luong) || 0) : 0;
+        const phanLoai = b ? b.phan_loai : 'TRONG';
+        const isMine = isOurCompanyBooking(b);
+
+        // Ẩn hoàn toàn nếu đã kín lịch (DONG / >= 500) hoặc công ty mình đã chốt (VAT)
+        if (phanLoai === 'DONG' || qty >= 500 || isMine) return;
+
+        if (!b || phanLoai === 'TRONG' || qty === 0) {
+          availableDests.push({
+            dest: dest,
+            status: 'TRONG',
+            qty: 0,
+            html: `
+              <div onclick="selectDestFromAvail('${dest.id}', ${day}, ${month}, ${year})" class="cursor-pointer p-3 rounded-xl bg-white border-2 border-emerald-300 hover:border-emerald-500 hover:bg-emerald-50/40 shadow-xs flex items-center justify-between gap-2.5 transition active:scale-98">
+                <div class="flex items-center gap-2.5 truncate">
+                  <div class="w-3 h-3 rounded-full bg-emerald-500 flex-shrink-0"></div>
+                  <div class="truncate">
+                    <div class="text-xs font-black text-slate-900 truncate">${dest.ten}</div>
+                    <div class="text-[10px] text-slate-500 truncate">📍 ${dest.dia_chi}</div>
+                  </div>
+                </div>
+                <div class="text-right flex-shrink-0">
+                  <span class="inline-block text-[10px] font-black text-emerald-800 bg-emerald-100 border border-emerald-300 px-2 py-0.5 rounded-md">Trống hoàn toàn</span>
+                  <div class="text-[10px] text-emerald-700 font-bold mt-0.5">Tối đa: ${(dest.suc_chua || 0).toLocaleString()} hs</div>
+                </div>
+              </div>
+            `
+          });
+        } else if (qty < 500) {
+          const remaining = Math.max(0, (dest.suc_chua || 700) - qty);
+          availableDests.push({
+            dest: dest,
+            status: 'NHO',
+            qty: qty,
+            html: `
+              <div onclick="selectDestFromAvail('${dest.id}', ${day}, ${month}, ${year})" class="cursor-pointer p-3 rounded-xl bg-white border-2 border-amber-300 hover:border-amber-500 hover:bg-amber-50/40 shadow-xs flex items-center justify-between gap-2.5 transition active:scale-98">
+                <div class="flex items-center gap-2.5 truncate">
+                  <div class="w-3 h-3 rounded-full bg-amber-500 flex-shrink-0"></div>
+                  <div class="truncate">
+                    <div class="text-xs font-black text-slate-900 truncate">${dest.ten}</div>
+                    <div class="text-[10px] text-slate-500 truncate">📍 ${dest.dia_chi}</div>
+                  </div>
+                </div>
+                <div class="text-right flex-shrink-0">
+                  <span class="inline-block text-[10px] font-black text-amber-800 bg-amber-100 border border-amber-300 px-2 py-0.5 rounded-md">Có ${qty.toLocaleString()} hs</span>
+                  <div class="text-[10px] text-amber-700 font-bold mt-0.5">Còn nhận: ~${remaining.toLocaleString()} hs</div>
+                </div>
+              </div>
+            `
+          });
+        }
+      });
+
+      const headerDateHtml = `
+        <div class="p-3 rounded-xl bg-blue-50 border border-blue-200 flex items-center justify-between shadow-2xs mb-2">
+          <div class="flex items-center gap-2.5">
+            <div class="w-10 h-10 rounded-xl bg-blue-600 text-white flex flex-col items-center justify-center font-black leading-none shadow-xs">
+              <span class="text-sm">${day}</span>
+              <span class="text-[9px] text-blue-200 mt-0.5">T${month}</span>
+            </div>
+            <div>
+              <div class="text-xs font-black text-slate-900">${dayOfWeekStr}, ngày ${day}/${month}/${year}</div>
+              <div class="text-[10px] text-amber-600 font-bold">Âm lịch: Ngày ${lunar.day} tháng ${lunar.month}${lunar.leap ? ' (nhuận)' : ''}</div>
+            </div>
+          </div>
+          <span class="text-[10px] font-extrabold text-blue-800 bg-blue-100 px-2.5 py-1 rounded-lg border border-blue-200">
+            ${availableDests.length} điểm khả dụng
+          </span>
+        </div>
+      `;
+
+      if (availableDests.length === 0) {
+        container.innerHTML = headerDateHtml + `
+          <div class="text-center py-8 text-slate-400 space-y-2 bg-white rounded-xl border border-slate-200 p-4">
+            <div class="text-3xl">🚫</div>
+            <div class="text-xs font-bold text-rose-600">Không có điểm nào khả dụng vào ngày này!</div>
+            <div class="text-[10px] text-slate-400">Tất cả các điểm đến đã kín lịch hoặc đã chốt đoàn.</div>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = headerDateHtml + `
+        <div class="space-y-2">
+          ${availableDests.map(x => x.html).join('')}
+        </div>
+      `;
+    }
+
+    function selectDestFromAvail(destId, day, month, year) {
+      selectedDestId = destId;
+      currentMonth = month;
+      currentYear = year;
+      renderDestSelect();
+      updateDestPreview();
+      renderCalendar();
+      closeAvailableDestModal();
+      thongBao("Đã chuyển tới lịch của điểm được chọn!", "success");
+    }
+
+    // ================= 12. QUẢN LÝ ĐIỂM ĐẾN TRONG BẢNG QUẢN TRỊ =================
     function openAdminModal() {
       const sel = document.getElementById('import-dest-select');
       sel.innerHTML = '';
@@ -1426,9 +2362,11 @@
       renderAdminDestList();
       document.getElementById('admin-modal').classList.remove('hidden');
     }
-    function closeAdminModal() { document.getElementById('admin-modal').classList.add('hidden'); }
 
-    // HÀM RENDER DANH SÁCH ĐIỂM ĐẾN KÈM BỘ LỌC TÌM KIẾM REALTIME
+    function closeAdminModal() {
+      document.getElementById('admin-modal').classList.add('hidden');
+    }
+
     function renderAdminDestList() {
       const list = document.getElementById('admin-dest-list');
       const searchInput = document.getElementById('admin-dest-search');
@@ -1457,7 +2395,7 @@
         item.innerHTML = `
           <div class="truncate mr-2">
             <div class="font-bold text-slate-800 text-xs truncate">${d.ten}</div>
-            <div class="text-[10px] text-slate-500 truncate">${d.dia_chi} | Sức chứa: ${d.suc_chua.toLocaleString()}</div>
+            <div class="text-[10px] text-slate-500 truncate">${d.dia_chi} | Sức chứa: ${(d.suc_chua || 0).toLocaleString()} hs</div>
           </div>
           <div class="flex gap-1.5 flex-shrink-0">
             <button onclick="editDest('${d.id}')" class="px-2.5 py-1 rounded-md bg-amber-500 hover:bg-amber-600 text-white font-bold text-[10px] transition">Sửa</button>
@@ -1503,6 +2441,8 @@
         return;
       }
 
+      thongBao("Đang lưu điểm đến lên Google Sheets...", "warning");
+
       try {
         await fetch(APPS_SCRIPT_URL, {
           method: 'POST',
@@ -1516,14 +2456,16 @@
         openAdminModal();
         thongBao(isEditing ? "Đã cập nhật điểm đến thành công!" : "Đã tạo mới điểm đến thành công!", "success");
       } catch (err) {
-        thongBao("Lỗi khi lưu: " + err.message, "error");
+        thongBao("Lỗi khi lưu điểm đến: " + err.message, "error");
       }
     }
 
     async function deleteDest(id) {
       const item = destinations.find(x => x.id === id);
       const ten = item ? item.ten : "điểm đến";
-      if (!confirm(`Xác nhận xóa hoàn toàn điểm đến "${ten}"?`)) return;
+      if (!confirm(`Xác nhận xóa hoàn toàn điểm đến "${ten}" trên Google Sheets?`)) return;
+
+      thongBao("Đang xóa điểm đến...", "warning");
 
       try {
         await fetch(APPS_SCRIPT_URL, {
@@ -1541,181 +2483,72 @@
       }
     }
 
-    // ================= 10. HÀM NHẬP DỮ LIỆU TỰ ĐỘNG (EXCEL & GEMINI AI) =================
-    async function submitAiImport() {
-      let destId = document.getElementById('import-dest-select').value;
-      if (!destId) destId = selectedDestId;
+    // ================= TỰ ĐỘNG ĐÓNG CỬA SỔ KHI CLICK RA NGOÀI HOẶC BẤM ESC =================
+    function closeTopModal() {
+      // 1. Đóng dropdown danh sách điểm đến nếu đang mở
+      closeDestDropdown();
 
-      const fileInput = document.getElementById('excel-file-input');
-      const textInput = document.getElementById('import-text-input');
-      const textContent = textInput.value.trim();
-      const hasFile = fileInput.files.length > 0;
-      const hasText = Boolean(textContent);
+      // 2. Danh sách modal kiểm tra theo thứ tự ưu tiên tầng trên xuống dưới
+      const modalList = [
+        { id: 'manual-confirm-modal', fn: closeManualConfirmModal },
+        { id: 'warning-blue-edit-modal', fn: rejectBlueEdit },
+        { id: 'alert-red-booking-modal', fn: closeRedAlertModal },
+        { id: 'confirm-yellow-booking-modal', fn: () => closeYellowAlertModal(false) },
+        { id: 'confirm-modal', fn: closeConfirmModal },
+        { id: 'success-modal', fn: closeSuccessModal },
+        { id: 'booking-form-modal', fn: closeBookingFormModal },
+        { id: 'manual-calendar-modal', fn: closeManualCalendarModal },
+        { id: 'day-modal', fn: closeDayModal },
+        { id: 'booking-list-modal', fn: closeBookingListModal },
+        { id: 'history-modal', fn: closeHistoryModal },
+        { id: 'available-dest-modal', fn: closeAvailableDestModal },
+        { id: 'admin-modal', fn: closeAdminModal }
+      ];
 
-      if (!hasFile && !hasText) {
-        thongBao("Vui lòng đính kèm file Excel hoặc dán tin nhắn văn bản!", "warning");
-        return;
+      for (let m of modalList) {
+        const el = document.getElementById(m.id);
+        if (el && !el.classList.contains('hidden')) {
+          m.fn();
+          return true;
+        }
       }
 
-      const btn = document.getElementById('btn-run-ai');
-      btn.innerText = "⏳ Đang phân tích dữ liệu...";
-      btn.disabled = true;
-
-      let countFromExcel = 0;
-      let countFromText = 0;
-
-      try {
-        // --- PHẦN A: XỬ LÝ FILE EXCEL ---
-        if (hasFile) {
-          btn.innerText = "⏳ Đang đọc chuẩn file Excel...";
-          const file = fileInput.files[0];
-          const data = await file.arrayBuffer();
-          const workbook = XLSX.read(data, { cellDates: false });
-
-          const recordsMap = {};
-
-          workbook.SheetNames.forEach(sheetName => {
-            if (sheetName.includes('2026') || sheetName.includes('2027') || sheetName.includes('Tháng') || sheetName.includes('T')) {
-              const sheet = workbook.Sheets[sheetName];
-              const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
-
-              let currentDate = null;
-
-              rows.forEach(row => {
-                if (!row || row.length === 0) return;
-
-                const colA = String(row[0] || '').trim().toUpperCase();
-                if (colA.includes('TỔNG') || colA.includes('TOTAL')) return;
-
-                const cellDateVal = row[1];
-                let parsedDate = null;
-
-                if (typeof cellDateVal === 'number' && cellDateVal > 40000 && cellDateVal < 60000) {
-                  const utcDays = Math.floor(cellDateVal - 25569);
-                  const dateObj = new Date(utcDays * 86400 * 1000);
-                  const y = dateObj.getUTCFullYear();
-                  const m = String(dateObj.getUTCMonth() + 1).padStart(2, '0');
-                  const d = String(dateObj.getUTCDate()).padStart(2, '0');
-                  parsedDate = `${y}-${m}-${d}`;
-                } else if (typeof cellDateVal === 'string') {
-                  const mYMD = cellDateVal.match(/(\d{4})[-/](\d{1,2})[-/](\d{1,2})/);
-                  const mDMY = cellDateVal.match(/(\d{1,2})[-/](\d{1,2})[-/](\d{4})/);
-                  if (mYMD) parsedDate = `${mYMD[1]}-${mYMD[2].padStart(2, '0')}-${mYMD[3].padStart(2, '0')}`;
-                  else if (mDMY) parsedDate = `${mDMY[3]}-${mDMY[2].padStart(2, '0')}-${mDMY[1].padStart(2, '0')}`;
-                }
-
-                if (parsedDate) currentDate = parsedDate;
-
-                if (currentDate && (currentDate.startsWith('2026') || currentDate.startsWith('2027'))) {
-                  const rawTeam = String(row[2] || '').trim();
-                  const rawQty = Number(String(row[3] || '').replace(/[^0-9]/g, '')) || 0;
-                  const rawTotalDay = Number(String(row[4] || '').replace(/[^0-9]/g, '')) || 0;
-
-                  if (rawTeam === 'Tên đoàn' || rawTeam === 'Đơn vị du lịch') return;
-
-                  const cleanName = filterTravelCompanyNames(rawTeam);
-                  const rowQty = rawTotalDay > 0 ? rawTotalDay : rawQty;
-
-                  if (rawTeam || rowQty > 0) {
-                    if (!recordsMap[currentDate]) {
-                      recordsMap[currentDate] = { teams: [], maxQty: 0 };
-                    }
-                    if (cleanName && !recordsMap[currentDate].teams.includes(cleanName)) {
-                      recordsMap[currentDate].teams.push(cleanName);
-                    }
-                    if (rowQty > recordsMap[currentDate].maxQty) {
-                      recordsMap[currentDate].maxQty = rowQty;
-                    }
-                  }
-                }
-              });
-            }
-          });
-
-          const extractedExcel = Object.keys(recordsMap).map(dateStr => {
-            const item = recordsMap[dateStr];
-            const qty = item.maxQty;
-            return {
-              date: dateStr,
-              ten_doan: item.teams.join(', ') || 'Đoàn học sinh',
-              so_luong: qty,
-              phan_loai: qty >= 500 ? 'DONG' : (qty > 0 ? 'NHO' : 'TRONG'),
-              is_internal: false // Lịch nạp từ Excel là của cty khác
-            };
-          });
-
-          if (extractedExcel.length > 0) {
-            const resExcel = await fetch(APPS_SCRIPT_URL, {
-              method: 'POST',
-              mode: 'cors',
-              redirect: 'follow',
-              headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-              body: JSON.stringify({
-                action: 'batch_upsert_bookings',
-                destination_id: destId,
-                records: extractedExcel
-              })
-            });
-            const resJsonExcel = await resExcel.json();
-            countFromExcel = resJsonExcel.count || extractedExcel.length;
-          }
-        }
-
-        // --- PHẦN B: XỬ LÝ TIN NHẮN VĂN BẢN QUA GEMINI AI ---
-        if (hasText) {
-          btn.innerText = "⏳ Gemini AI đang đọc ngữ nghĩa tin nhắn...";
-
-          const currentDest = destinations.find(d => d.id === destId);
-          const destName = currentDest ? currentDest.ten : 'Điểm đến';
-          const destCap = currentDest ? currentDest.suc_chua : 700;
-
-          const resText = await fetch(APPS_SCRIPT_URL, {
-            method: 'POST',
-            mode: 'cors',
-            redirect: 'follow',
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify({
-              action: 'parse_and_upsert_bookings',
-              destination_id: destId,
-              destination_name: destName,
-              suc_chua: destCap,
-              month: currentMonth,
-              year: currentYear,
-              raw_text: textContent
-            })
-          });
-
-          const resJsonText = await resText.json();
-
-          if (resJsonText.status === 'success') {
-            countFromText = resJsonText.count || 0;
-          } else {
-            throw new Error(resJsonText.message || "AI gặp sự cố khi đọc tin nhắn");
-          }
-        }
-
-        fileInput.value = '';
-        textInput.value = '';
-        await fetchData();
-        closeAdminModal();
-
-        if (hasFile && hasText) {
-          thongBao(`Đã cập nhật ${countFromExcel} ngày từ Excel & ${countFromText} ngày từ tin nhắn!`, "success");
-        } else if (hasFile) {
-          thongBao(`Đã nạp thành công ${countFromExcel} ngày lịch từ file Excel!`, "success");
-        } else {
-          thongBao(`Đã phân tích & cập nhật thành công ${countFromText} ngày kín lịch từ tin nhắn!`, "success");
-        }
-
-      } catch (err) {
-        thongBao("Lỗi: " + err.message, "error");
-      } finally {
-        btn.innerText = "✨ Phân Tích & Cập Nhật Lịch Khác Biệt";
-        btn.disabled = false;
+      // Với cửa sổ tài khoản: chỉ đóng nếu đã có thông tin tài khoản trước đó
+      const accModal = document.getElementById('account-modal');
+      if (accModal && !accModal.classList.contains('hidden') && localStorage.getItem('app_user_profile')) {
+        accModal.classList.add('hidden');
+        return true;
       }
+
+      return false;
     }
 
-    // ================= KHỞI TẠO =================
+    // Bấm ra ngoài vùng nội dung modal sẽ tự đóng cửa sổ
+    document.addEventListener('click', function(e) {
+      // Đóng custom dropdown điểm đến nếu click ra ngoài wrapper của nó
+      const dropdownWrapper = document.getElementById('dest-dropdown-wrapper');
+      if (dropdownWrapper && !dropdownWrapper.contains(e.target)) {
+        closeDestDropdown();
+      }
+
+      // Nếu click trực tiếp vào lớp màng đen (backdrop overlay) thì đóng modal đó
+      const modalOverlay = e.target.closest('.fixed.inset-0');
+      if (modalOverlay && e.target === modalOverlay) {
+        if (modalOverlay.id === 'account-modal' && !localStorage.getItem('app_user_profile')) {
+          return;
+        }
+        closeTopModal();
+      }
+    });
+
+    // Bấm phím ESC trên bàn phím sẽ tự tắt cửa sổ (máy tính)
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' || e.key === 'Esc' || e.keyCode === 27) {
+        closeTopModal();
+      }
+    });
+
+    // ================= KHỞI TẠO HỆ THỐNG =================
     window.onload = function() {
       checkUserProfile();
       fetchData();
