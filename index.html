@@ -20,10 +20,10 @@
   <header class="h-[22vh] flex-none bg-white border-b border-slate-200 px-3 py-2 flex flex-col justify-between shadow-sm z-10">
     <div class="flex items-center justify-between">
       <div class="flex items-center gap-2 min-w-0">
-        <!-- 2 Logo thay thế quyển lịch góc trên bên trái -->
-        <div class="flex items-center gap-1.5 flex-shrink-0">
-          <img src="Logo ABA.png" alt="Logo ABA" class="h-8 w-auto max-w-[55px] object-contain">
-          <img src="logo safe edu.PNG" alt="Safe Edu" class="h-8 w-auto max-w-[45px] object-contain">
+        <!-- 2 Logo thay thế quyển lịch góc trên bên trái - Bấm xem hướng dẫn sử dụng -->
+        <div onclick="openGuideModal()" class="flex items-center gap-1.5 flex-shrink-0 cursor-pointer p-0.5 rounded-lg hover:bg-slate-100 transition active:scale-95 group" title="Bấm để xem hướng dẫn sử dụng">
+          <img src="Logo ABA.png" alt="Logo ABA" class="h-8 w-auto max-w-[55px] object-contain group-hover:scale-105 transition">
+          <img src="logo safe edu.PNG" alt="Safe Edu" class="h-8 w-auto max-w-[45px] object-contain group-hover:scale-105 transition">
         </div>
         <div class="truncate">
           <h1 class="text-xs font-extrabold text-slate-800 uppercase tracking-tight truncate">THÔNG TIN ĐIỂM ĐẾN</h1>
@@ -410,7 +410,7 @@
     <div id="day-modal-card" class="bg-white border border-slate-200 rounded-2xl w-full max-w-sm max-h-[90vh] flex flex-col p-4 shadow-2xl transition-all duration-200 overflow-hidden">
       <div class="flex justify-between items-start border-b border-slate-100 pb-2.5 flex-none">
         <div>
-          <h3 id="modal-date-solar" class="text-base font-extrabold text-blue-700 leading-tight">Ngày Dương</h3>
+          <h3 id="modal-date-solar" class="text-base font-extrabold text-blue-700 leading-tight">Thông tin ngày</h3>
           <p id="modal-date-lunar" class="text-xs font-bold text-amber-600 mt-0.5">Âm lịch: </p>
         </div>
         <button onclick="closeDayModal()" class="w-7 h-7 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 font-bold flex items-center justify-center">✕</button>
@@ -663,6 +663,38 @@
           <div id="admin-dest-list" class="space-y-1.5 max-h-48 overflow-y-auto"></div>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- ================= MODAL: HƯỚNG DẪN SỬ DỤNG (FULL MÀN HÌNH CÓ PHÓNG TO/THU NHỎ) ================= -->
+  <div id="guide-modal" class="fixed inset-0 bg-slate-950/90 backdrop-blur-md hidden z-[250] flex flex-col items-center justify-center p-2 sm:p-4 select-none">
+    <!-- Nút tắt chữ x ở góc trên bên trái theo đúng yêu cầu -->
+    <button onclick="closeGuideModal()" class="absolute top-3 left-3 sm:top-5 sm:left-5 z-[260] w-10 h-10 rounded-full bg-slate-900/90 hover:bg-slate-800 text-white font-black text-xl flex items-center justify-center shadow-2xl border border-white/20 transition active:scale-90" title="Đóng hướng dẫn (Esc)">
+      ✕
+    </button>
+
+    <!-- Cụm nút điều khiển Phóng to / Thu nhỏ / Đặt lại ở góc trên bên phải -->
+    <div class="absolute top-3 right-3 sm:top-5 sm:right-5 z-[260] flex items-center gap-1.5 bg-slate-900/90 backdrop-blur-md border border-white/20 px-2.5 py-1 rounded-full shadow-2xl">
+      <button onclick="guideZoomOut()" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white font-bold text-lg flex items-center justify-center transition active:scale-90" title="Thu nhỏ (-)">
+        −
+      </button>
+      <span id="guide-zoom-level" class="text-xs font-black text-white px-1.5 min-w-[42px] text-center">100%</span>
+      <button onclick="guideZoomIn()" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white font-bold text-lg flex items-center justify-center transition active:scale-90" title="Phóng to (+)">
+        +
+      </button>
+      <button onclick="guideResetZoom()" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white font-bold text-xs flex items-center justify-center transition active:scale-90 ml-1" title="Đặt lại (100%)">
+        ⟲
+      </button>
+    </div>
+
+    <!-- Khung xem ảnh full gần kín màn hình -->
+    <div id="guide-viewport" class="relative w-full h-full max-w-[98vw] max-h-[94vh] flex items-center justify-center overflow-hidden touch-none cursor-grab active:cursor-grabbing">
+      <img id="guide-image" src="Huongdasudung.jpg" alt="Hướng dẫn sử dụng" class="max-w-full max-h-full object-contain pointer-events-none rounded-xl shadow-2xl origin-center will-change-transform">
+    </div>
+
+    <!-- Gợi ý thao tác dưới chân màn hình -->
+    <div class="absolute bottom-2 inset-x-0 text-center pointer-events-none text-white/75 text-[10px] sm:text-xs font-semibold tracking-wide drop-shadow px-4">
+      💡 Chạm 2 ngón tay hoặc cuộn chuột để phóng to / thu nhỏ • Nhấp đúp để phóng to • Kéo để xem chi tiết
     </div>
   </div>
 
@@ -2483,6 +2515,183 @@
       }
     }
 
+    // ================= MODAL: HƯỚNG DẪN SỬ DỤNG (FULL MÀN HÌNH & THU PHÓNG) =================
+    let guideScale = 1.0;
+    let guidePosX = 0;
+    let guidePosY = 0;
+    let isGuideDragging = false;
+    let guideStartX = 0;
+    let guideStartY = 0;
+    let guideInitialPinchDist = 0;
+    let guideInitialPinchScale = 1.0;
+    let guideLastTapTime = 0;
+    let guideListenersInitialized = false;
+
+    function openGuideModal() {
+      guideResetZoom();
+      const modal = document.getElementById('guide-modal');
+      if (modal) {
+        modal.classList.remove('hidden');
+        initGuideInteractions();
+      }
+    }
+
+    function closeGuideModal() {
+      const modal = document.getElementById('guide-modal');
+      if (modal) {
+        modal.classList.add('hidden');
+      }
+      guideResetZoom();
+    }
+
+    function updateGuideTransform(animate = false) {
+      const img = document.getElementById('guide-image');
+      const zoomText = document.getElementById('guide-zoom-level');
+      if (!img) return;
+
+      // Giới hạn scale từ 1.0 đến 4.0
+      guideScale = Math.min(Math.max(guideScale, 1.0), 4.0);
+
+      // Nếu scale về 1 thì đưa về chính giữa
+      if (guideScale <= 1.02) {
+        guidePosX = 0;
+        guidePosY = 0;
+      } else {
+        // Giới hạn khoảng kéo trong khung nhìn
+        const viewport = document.getElementById('guide-viewport');
+        if (viewport) {
+          const vw = viewport.clientWidth;
+          const vh = viewport.clientHeight;
+          const maxDragX = (vw * (guideScale - 1)) / 1.6;
+          const maxDragY = (vh * (guideScale - 1)) / 1.6;
+          guidePosX = Math.min(Math.max(guidePosX, -maxDragX), maxDragX);
+          guidePosY = Math.min(Math.max(guidePosY, -maxDragY), maxDragY);
+        }
+      }
+
+      img.style.transition = animate ? 'transform 0.2s cubic-bezier(0.2, 0, 0, 1)' : 'none';
+      img.style.transform = `translate3d(${guidePosX}px, ${guidePosY}px, 0) scale(${guideScale})`;
+      if (zoomText) {
+        zoomText.innerText = `${Math.round(guideScale * 100)}%`;
+      }
+    }
+
+    function guideZoomIn() {
+      guideScale = Math.min(guideScale + 0.35, 4.0);
+      updateGuideTransform(true);
+    }
+
+    function guideZoomOut() {
+      guideScale = Math.max(guideScale - 0.35, 1.0);
+      updateGuideTransform(true);
+    }
+
+    function guideResetZoom() {
+      guideScale = 1.0;
+      guidePosX = 0;
+      guidePosY = 0;
+      updateGuideTransform(true);
+    }
+
+    function initGuideInteractions() {
+      if (guideListenersInitialized) return;
+      guideListenersInitialized = true;
+
+      const viewport = document.getElementById('guide-viewport');
+      if (!viewport) return;
+
+      // 1. Thao tác cảm ứng trên điện thoại (Pinch zoom & Pan drag)
+      viewport.addEventListener('touchstart', function(e) {
+        if (e.touches.length === 1) {
+          const now = Date.now();
+          if (now - guideLastTapTime < 300) {
+            // Nhấp đúp (Double tap): phóng to 2.2x hoặc đặt lại 1.0x
+            if (guideScale > 1.2) {
+              guideResetZoom();
+            } else {
+              guideScale = 2.2;
+              updateGuideTransform(true);
+            }
+            guideLastTapTime = 0;
+            return;
+          }
+          guideLastTapTime = now;
+
+          isGuideDragging = true;
+          guideStartX = e.touches[0].clientX - guidePosX;
+          guideStartY = e.touches[0].clientY - guidePosY;
+        } else if (e.touches.length === 2) {
+          isGuideDragging = false;
+          const dx = e.touches[0].clientX - e.touches[1].clientX;
+          const dy = e.touches[0].clientY - e.touches[1].clientY;
+          guideInitialPinchDist = Math.hypot(dx, dy);
+          guideInitialPinchScale = guideScale;
+        }
+      }, { passive: false });
+
+      viewport.addEventListener('touchmove', function(e) {
+        e.preventDefault();
+        if (e.touches.length === 2 && guideInitialPinchDist > 0) {
+          const dx = e.touches[0].clientX - e.touches[1].clientX;
+          const dy = e.touches[0].clientY - e.touches[1].clientY;
+          const dist = Math.hypot(dx, dy);
+          const ratio = dist / guideInitialPinchDist;
+          guideScale = Math.min(Math.max(guideInitialPinchScale * ratio, 1.0), 4.0);
+          updateGuideTransform(false);
+        } else if (e.touches.length === 1 && isGuideDragging && guideScale > 1.0) {
+          guidePosX = e.touches[0].clientX - guideStartX;
+          guidePosY = e.touches[0].clientY - guideStartY;
+          updateGuideTransform(false);
+        }
+      }, { passive: false });
+
+      viewport.addEventListener('touchend', function(e) {
+        if (e.touches.length === 0) {
+          isGuideDragging = false;
+          guideInitialPinchDist = 0;
+          if (guideScale <= 1.0) {
+            guideResetZoom();
+          }
+        } else if (e.touches.length === 1) {
+          guideStartX = e.touches[0].clientX - guidePosX;
+          guideStartY = e.touches[0].clientY - guidePosY;
+          isGuideDragging = true;
+          guideInitialPinchDist = 0;
+        }
+      });
+
+      // 2. Thao tác chuột trên máy tính (Wheel zoom & Drag pan)
+      viewport.addEventListener('wheel', function(e) {
+        e.preventDefault();
+        const delta = e.deltaY < 0 ? 0.25 : -0.25;
+        guideScale = Math.min(Math.max(guideScale + delta, 1.0), 4.0);
+        updateGuideTransform(false);
+      }, { passive: false });
+
+      viewport.addEventListener('mousedown', function(e) {
+        if (e.button !== 0) return;
+        isGuideDragging = true;
+        guideStartX = e.clientX - guidePosX;
+        guideStartY = e.clientY - guidePosY;
+      });
+
+      window.addEventListener('mousemove', function(e) {
+        if (!isGuideDragging || guideScale <= 1.0) return;
+        guidePosX = e.clientX - guideStartX;
+        guidePosY = e.clientY - guideStartY;
+        updateGuideTransform(false);
+      });
+
+      window.addEventListener('mouseup', function() {
+        if (isGuideDragging) {
+          isGuideDragging = false;
+          if (guideScale <= 1.0) {
+            guideResetZoom();
+          }
+        }
+      });
+    }
+
     // ================= TỰ ĐỘNG ĐÓNG CỬA SỔ KHI CLICK RA NGOÀI HOẶC BẤM ESC =================
     function closeTopModal() {
       // 1. Đóng dropdown danh sách điểm đến nếu đang mở
@@ -2490,6 +2699,7 @@
 
       // 2. Danh sách modal kiểm tra theo thứ tự ưu tiên tầng trên xuống dưới
       const modalList = [
+        { id: 'guide-modal', fn: closeGuideModal },
         { id: 'manual-confirm-modal', fn: closeManualConfirmModal },
         { id: 'warning-blue-edit-modal', fn: rejectBlueEdit },
         { id: 'alert-red-booking-modal', fn: closeRedAlertModal },
@@ -2533,7 +2743,7 @@
 
       // Nếu click trực tiếp vào lớp màng đen (backdrop overlay) thì đóng modal đó
       const modalOverlay = e.target.closest('.fixed.inset-0');
-      if (modalOverlay && e.target === modalOverlay) {
+      if (modalOverlay && (e.target === modalOverlay || (modalOverlay.id === 'guide-modal' && e.target.id === 'guide-viewport' && guideScale <= 1.05))) {
         if (modalOverlay.id === 'account-modal' && !localStorage.getItem('app_user_profile')) {
           return;
         }
